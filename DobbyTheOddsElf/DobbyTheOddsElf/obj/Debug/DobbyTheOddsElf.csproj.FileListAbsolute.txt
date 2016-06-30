@@ -18,3 +18,6 @@ C:\src\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\bin\Debug\SampleDatabase_log.ld
 C:\src\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\obj\Debug\DobbyTheOddsElf_Content.g.cs
 C:\src\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\bin\Debug\System.Data.SQLite.dll
 C:\src\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\bin\Debug\System.Data.SQLite.xml
+C:\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\bin\Debug\DobbyTheOddsElf.exe.config
+C:\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\obj\Debug\DobbyTheOddsElf.exe
+C:\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\obj\Debug\DobbyTheOddsElf.pdb

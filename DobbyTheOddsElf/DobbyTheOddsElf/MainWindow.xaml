@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DobbyTheOddsElf"
         mc:Ignorable="d"
-        Title="Dobby - The Odds Elf!" Height="550" Width="850">
+        Title="Dobby - The Odds Elf!" Height="550" Width="850" Icon="dobbyTheElfIcon.ico">
     <Window.Background>
         <ImageBrush ImageSource="circuit-spa-francorchamps.jpg" Stretch="UniformToFill"/>
     </Window.Background>

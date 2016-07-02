@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.IO;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
+using System.Linq;
 
 namespace DobbyTheOddsElf
 {
@@ -19,119 +21,112 @@ namespace DobbyTheOddsElf
         public MainWindow()
         {
             InitializeComponent();
-            urlTextBox.Text = "https://sports.bovada.lv/live-betting/event/2466820";
             NavigateMainWebBrowser();
             timer = new Timer(TIMER_DURATION);
             timer.Elapsed += new ElapsedEventHandler(timerElapsed);
-            CreateSQLiteDatabase();
-            textBoxTeam1.Text = "Australia";
-            textBoxTeam2.Text = "West Indies";
+            CreateSQLiteDatabase();            
         }
 
         private void CreateSQLiteDatabase()
         {
-            sqlconn = new SQLiteConnection("Data Source=c:\\sports\\liveRates.sqlite;Version=3;New=True;Compress=True;");
+            sqlconn = new SQLiteConnection("Data Source="+GetDatabaseLocation()+GetDatabaseName()+".sqlite;Version=3;New=True;Compress=True;");
             sqlconn.Open();
-
-            SQLiteCommand createQ = new SQLiteCommand("CREATE TABLE IF NOT EXISTS sportsLiveRates( DateTime TEXT, Team TEXT, Rate INT)", sqlconn);
+            SQLiteCommand createQ = new SQLiteCommand("CREATE TABLE IF NOT EXISTS sportsLiveRates( DateTime TEXT, Team TEXT, Rate TEXT)", sqlconn);
             createQ.ExecuteNonQuery();
             sqlconn.Close();
         }
 
+        private string GetDatabaseLocation()
+        {
+            string databaseLocation = "c:\\sports\\" + DateTime.Now.ToString("yyyy_MM_dd") +"\\";
+            if (!Directory.Exists(databaseLocation))
+            {
+                Directory.CreateDirectory(databaseLocation);
+            }
+            return databaseLocation;
+        }
+
+        private string GetDatabaseName()
+        {
+            //Objective: Give Database a unique name, Convention: date time + processID: 
+            return DateTime.Now.ToString("yyyy_MM_dd_HH_mm");
+        }
+
         private void timerElapsed(object sender, ElapsedEventArgs e)
         {
-            Dispatcher.Invoke(new Action(() =>
-            {
-                ReportRates();
-                string currentRateToNotify = GetCurrentRate();
-                if((currentRateToNotify.Length > 0) && (thresholdValueTextBox.Text.ToString().Length > 0))
-                {
-                    int iCurrentRate = int.Parse(currentRateToNotify);
-                    if(thresholdComboBox.SelectedIndex == 0)
-                    {
-                        //Less than: 
-                        if(iCurrentRate <= int.Parse(thresholdValueTextBox.Text.ToString()))
-                        {
-                            MessageBox.Show("Alert rate dropped to below " + thresholdValueTextBox + ", Current Rate = " + iCurrentRate.ToString());
-                        }
-                        
-                    }
-                    else if (thresholdComboBox.SelectedIndex == 1)
-                    {
-                        //Less than: 
-                        if (iCurrentRate >= int.Parse(thresholdValueTextBox.Text.ToString()))
-                        {
-                            MessageBox.Show("Alert rate incresed more than " + thresholdValueTextBox + ", Current Rate = " + iCurrentRate.ToString());
-                        }
-
-                    }
-                }
-
-            }));
+            Dispatcher.Invoke(new Action(() =>  {
+                                                    ReportRates();
+                                                }));
         }
 
         private void ReportRates()
-        {
-           
+        {  
             List<string> processedWebSource = GetProcessedWebSource(readWebPageSource());
 
-            if (processedWebSource.Contains(metricTextBox.Text.ToString()))
+            if (processedWebSource.Contains(metricTextBox.Text.ToString(), StringComparer.OrdinalIgnoreCase))
             {
-                int index = processedWebSource.FindIndex(new Predicate<string>(item => item == metricTextBox.Text.ToString()));
-                if ((processedWebSource[index + 1] == "Australia") || (processedWebSource[index + 1] == "West Indies"))
+                string teamA = GetTeamName(textBoxTeam1.Text);
+                string teamB = GetTeamName(textBoxTeam2.Text);
+
+                int index = processedWebSource.FindIndex(new Predicate<string>(item => item.ToUpper() == metricTextBox.Text.ToUpper()));
+                if( Validate(processedWebSource[index+1], processedWebSource[index+2], teamA, teamB))
                 {
-                    int test = -1;
-                    if (int.TryParse(processedWebSource[index + 2], out test))
-                    {
-                        CreateRow(processedWebSource[index + 1], int.Parse(processedWebSource[index + 2]));
-                    }
-                }
-                if ((processedWebSource[index + 3] == "Australia") || (processedWebSource[index + 3] == "West Indies"))
+                    CreateRow(processedWebSource[index + 1], GetRate(processedWebSource[index + 2]));
+                }                
+                if (Validate(processedWebSource[index + 3], processedWebSource[index + 4], teamA, teamB))
                 {
-                    int test = -1;
-                    if (int.TryParse(processedWebSource[index + 2], out test))
-                    {
-                        CreateRow(processedWebSource[index + 3], int.Parse(processedWebSource[index + 4]));
-                    }
+                    CreateRow(processedWebSource[index + 3], GetRate(processedWebSource[index + 4]));
                 }
             }
         }
 
-        public void CreateRow(string team, int rate)
+        private bool Validate(string webInputTeamName, string webInputRate, string userTeamNameA, string userTeamNameB)
+        {
+            if ((webInputTeamName.ToUpper().CompareTo(userTeamNameA.ToUpper()) != 0) && (webInputTeamName.ToUpper().CompareTo(userTeamNameB.ToUpper()) != 0))
+                return false;
+
+            if (webInputRate.ToUpper().CompareTo("SUSPENDED") == 0)
+                return false;
+
+            //default:
+            return true;
+        }
+
+        private string GetRate(string rate)
+        {
+            //Place to add any validations in the future.
+
+            if (rate == "EVEN")
+            { rate = "100"; }
+
+            
+
+            return rate;
+        }
+
+        private string GetTeamName(string teamName)
+        {
+            //Place to add any validations in the future.
+
+            return teamName;
+        }
+
+        public void CreateRow(string team, string rate)
         {
             sqlconn.Open();
-            
-            string dateTime = DateTime.Now.ToString("MM/dd/yyyy h:mm tt");
-            SQLiteCommand insertSQL = new SQLiteCommand(@"INSERT INTO sportsLiveRates (DateTime, Team, Rate) VALUES ("" " + dateTime + @" "","" " + team + @" ""," + rate + ");", sqlconn);
+            string dateTime = DateTime.Now.ToString("d / M / yyyy HH:mm:ss");
+            string insertCommand = @"INSERT INTO sportsLiveRates (DateTime, Team, Rate) VALUES ("" " + dateTime + @" "","" " + team + @" ""," + rate + ");";
+            SQLiteCommand insertSQL = new SQLiteCommand(insertCommand, sqlconn);
             try
             {
                 insertSQL.ExecuteNonQuery();
-                Console.WriteLine(insertSQL.CommandText.ToString());
+                listBoxQuerySubmitted.Items.Add(insertSQL.CommandText.ToString());                
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
             sqlconn.Close();
-        }
-
-        private string GetCurrentRate()
-        {
-            List<string> processedWebSource = GetProcessedWebSource(readWebPageSource());
-
-            if (processedWebSource.Contains(metricTextBox.Text.ToString()))
-            {
-                int index = processedWebSource.FindIndex(new Predicate<string>(item => item == metricTextBox.Text.ToString()));
-                if (processedWebSource[index + 1] == teamTextBox.Text.ToString())
-                {
-                    return processedWebSource[index + 2];
-                }
-                else if (processedWebSource[index + 3] == teamTextBox.Text.ToString())
-                {
-                    return processedWebSource[index + 4];
-                }
-            }
-            return "";
         }
 
         private void urlTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -146,20 +141,13 @@ namespace DobbyTheOddsElf
         {
             try
             {
-                mainWebBrowser.Navigate(urlTextBox.Text.ToString());
+                mainWebBrowser.Navigate("https://sports.bovada.lv/live-betting/");
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error in navigating URL " + Environment.NewLine + "Details: " + ex.Message);
             }
-        }
-
-        private void button_Click(object sender, RoutedEventArgs e)
-        {
-            string webPageSource = readWebPageSource();
-            //MessageBox.Show(webPageSource);
-            List<string> processedWebSource = GetProcessedWebSource(webPageSource);
-        }
+        }        
 
         private List<string> GetProcessedWebSource(string webPageSource)
         {
@@ -191,7 +179,6 @@ namespace DobbyTheOddsElf
                 {
                     tempBuffer += c;
                 }
-
             }
 
             tempBuffer = tempBuffer.TrimStart();
@@ -223,6 +210,3 @@ namespace DobbyTheOddsElf
         }
     }
 }
-
-
-//Testing GIT

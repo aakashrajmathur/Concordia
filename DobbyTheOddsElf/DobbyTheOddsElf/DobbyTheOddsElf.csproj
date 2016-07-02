@@ -129,6 +129,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="circuit-spa-francorchamps.jpg" />
     <Content Include="SampleDatabase.mdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

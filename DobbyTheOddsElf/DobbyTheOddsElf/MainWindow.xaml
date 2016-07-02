@@ -5,27 +5,81 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DobbyTheOddsElf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="800">
+        Title="Dobby - The Odds Elf!" Height="550" Width="850">
+    <Window.Background>
+        <ImageBrush ImageSource="circuit-spa-francorchamps.jpg" Stretch="UniformToFill"/>
+    </Window.Background>
     <Grid>
-        <WebBrowser x:Name="mainWebBrowser" Margin="0,185,-0.4,-0.2"/>
-        <Label x:Name="label" Content="URL" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="34"/>
-        <TextBox x:Name="urlTextBox" Margin="49,15,158.4,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="enter URL..." KeyDown="urlTextBox_KeyDown"/>
-        <Button x:Name="processWebSourceButton" Content="Process Web Source" Margin="0,13,14.6,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="139" Click="button_Click"/>
-        <TextBox x:Name="metricTextBox" HorizontalAlignment="Left" Height="23" Margin="299,42,0,0" TextWrapping="Wrap" Text="Match Winner" VerticalAlignment="Top" Width="100"/>
-        <TextBox x:Name="teamTextBox" HorizontalAlignment="Left" Height="22" Margin="188,120,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="metricLabel" Content="Metric" HorizontalAlignment="Left" Margin="250,38,0,0" VerticalAlignment="Top" Width="44"/>
-        <Label x:Name="teamLabel" Content="Team" HorizontalAlignment="Left" Margin="145,116,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="monitorButton" Content="Start" Margin="0,161,405.6,0" VerticalAlignment="Top" Click="monitorButton_Click" HorizontalAlignment="Right" Width="75"/>
-        <ComboBox x:Name="thresholdComboBox" HorizontalAlignment="Left" Margin="313,121,0,0" VerticalAlignment="Top" Width="102" SelectedIndex="0">
-            <ComboBoxItem Content="less than"/>
-            <ComboBoxItem Content="greater than"/>
-        </ComboBox>
-        <TextBox x:Name="thresholdValueTextBox" HorizontalAlignment="Left" Height="23" Margin="420,119,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="textBoxTeam1" HorizontalAlignment="Left" Height="23" Margin="192,85,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="textBoxTeam2" HorizontalAlignment="Left" Height="23" Margin="424,85,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="label1" Content="Team 1" HorizontalAlignment="Left" Margin="120,81,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.409,0.033" Width="67"/>
-        <Label x:Name="label2" Content="Team 2" HorizontalAlignment="Left" Margin="351,81,0,0" VerticalAlignment="Top"/>
+        <StackPanel Orientation="Vertical" Margin="0,12,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="2">
+                <Label x:Name="metricLabel" Content="Metric" 
+                       HorizontalAlignment="Center" Margin="5" 
+                       VerticalAlignment="Top" Width="67" 
+                       RenderTransformOrigin="-4.957,0.816" Height="24" 
+                       FontWeight="SemiBold" VerticalContentAlignment="Center" Padding="5,3,5,5" HorizontalContentAlignment="Right">
+                    <Label.Background>
+                        <SolidColorBrush Color="#CCFFFFFF"/>
+                    </Label.Background>
+                </Label>
+                <TextBox x:Name="metricTextBox" 
+                         HorizontalAlignment="Center" Height="24" 
+                         Margin="5" TextWrapping="Wrap" Text="Match Winner" VerticalAlignment="Top" Width="408" VerticalContentAlignment="Center">
+                    <TextBox.Background>
+                        <SolidColorBrush Color="#CCFFFFFF"/>
+                    </TextBox.Background>
+                </TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="2">
+                <Label x:Name="label1" Content="Team 1" 
+                       HorizontalAlignment="Center" Margin="5"
+                       VerticalAlignment="Top" Width="67" 
+                       RenderTransformOrigin="-4.957,0.816" Height="24" 
+                       FontWeight="SemiBold" VerticalContentAlignment="Center" 
+                       Padding="5,3,5,5" HorizontalContentAlignment="Right">
+                    <Label.Background>
+                        <SolidColorBrush Color="#CCFFFFFF"/>
+                    </Label.Background>
+                </Label>
+                <TextBox x:Name="textBoxTeam1" 
+                         HorizontalAlignment="Center" Height="24" 
+                         Margin="5" TextWrapping="Wrap" VerticalAlignment="Top" 
+                         Width="408" VerticalContentAlignment="Center">
+                    <TextBox.Background>
+                        <SolidColorBrush Color="#CCFFFFFF"/>
+                    </TextBox.Background>
+                </TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="2">
+                <Label x:Name="label2" Content="Team 2" 
+                       HorizontalAlignment="Center" Margin="5" 
+                       VerticalAlignment="Top" Width="67" 
+                       RenderTransformOrigin="-4.957,0.816" Height="24" 
+                       FontWeight="SemiBold" VerticalContentAlignment="Center" 
+                       Padding="5,3,5,5" HorizontalContentAlignment="Right">
+                    <Label.Background>
+                        <SolidColorBrush Color="#CCFFFFFF"/>
+                    </Label.Background>
+                </Label>
+                <TextBox x:Name="textBoxTeam2" HorizontalAlignment="Center" 
+                         Height="24" Margin="5" TextWrapping="Wrap" 
+                         VerticalAlignment="Top" Width="408" 
+                         FontWeight="Normal" VerticalContentAlignment="Center">
+                    <TextBox.Background>
+                        <SolidColorBrush Color="#CCFFFFFF"/>
+                    </TextBox.Background>
+                </TextBox>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Center" Margin="5">
+                <Button x:Name="monitorButton" Content="Start" 
+                        Margin="5" VerticalAlignment="Top" Click="monitorButton_Click" Width="75" HorizontalAlignment="Center" Height="24">
+                    <Button.Background>
+                        <SolidColorBrush Color="#CCBFEEB3"/>
+                    </Button.Background>
+                </Button>
+            </StackPanel>
+        </StackPanel>
 
-
+        <WebBrowser x:Name="mainWebBrowser" Margin="10,185,423.2,9.8"/>
+        <ListBox x:Name="listBoxQuerySubmitted" Margin="0,185,9.2,9.8" HorizontalAlignment="Right" Width="409" Background="#BFFFFFFF"/>
     </Grid>
 </Window>

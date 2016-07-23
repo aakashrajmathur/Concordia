@@ -133,15 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="circuit-spa-francorchamps.jpg" />
-    <Resource Include="dobbyTheElf.jpg" />
     <Resource Include="dobbyTheElfIcon.ico" />
-    <Content Include="SampleDatabase.mdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SampleDatabase_log.ldf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <DependentUpon>SampleDatabase.mdf</DependentUpon>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

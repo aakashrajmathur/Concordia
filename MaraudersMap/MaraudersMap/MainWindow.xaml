@@ -1,0 +1,24 @@
+﻿<Window x:Class="MaraudersMap.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MaraudersMap"
+        mc:Ignorable="d"
+        Title="Marauder's Map" Height="391.829" Width="525">
+    <Window.Background>
+        <ImageBrush ImageSource="MaraudersMap.jpg"/>
+    </Window.Background>
+    <Grid>
+        <WebBrowser Margin="10,0,10.4,10.4" Height="90" VerticalAlignment="Bottom"/>
+        <Grid Margin="10,44,10.4,105.4"> 
+            <!-- Define Columns -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions> 
+            <ListBox Grid.Column="0" x:Name="listBoxLiveEvents"  Width="auto" Opacity="0.25" Margin="0,0,5,0"/>
+            <ListBox Grid.Column="1" x:Name="listBoxFinishedEvents" Width="auto" Opacity="0.25" Margin="5,0,0,0"/>
+        </Grid>
+    </Grid>
+</Window>

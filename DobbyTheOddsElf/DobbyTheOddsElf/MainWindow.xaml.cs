@@ -17,6 +17,7 @@ namespace DobbyTheOddsElf
         Timer timer;
         const int TIMER_DURATION = 5000;
         SQLiteConnection sqlconn;
+        public static string URL; 
 
         public MainWindow()
         {
@@ -24,7 +25,13 @@ namespace DobbyTheOddsElf
             NavigateMainWebBrowser();
             timer = new Timer(TIMER_DURATION);
             timer.Elapsed += new ElapsedEventHandler(timerElapsed);
-            CreateSQLiteDatabase();            
+            CreateSQLiteDatabase();
+
+            string[] args = Environment.GetCommandLineArgs();
+            foreach(string s in args)
+            {
+                // MessageBox.Show(s);
+            }
         }
 
         private void CreateSQLiteDatabase()
@@ -97,16 +104,18 @@ namespace DobbyTheOddsElf
             //Place to add any validations in the future.
 
             if (rate == "EVEN")
-            { rate = "100"; }
-
+            {
+                rate = "100";
+            }
             
-
             return rate;
         }
 
         private string GetTeamName(string teamName)
         {
             //Place to add any validations in the future.
+            //"ST Kitts &amp; Nevis Patriots"
+            teamName = teamName.Replace("&", "&amp;");
 
             return teamName;
         }

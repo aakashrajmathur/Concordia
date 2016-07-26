@@ -1,7 +1,7 @@
 C:\src\Concordia\MaraudersMap\MaraudersMap\bin\Debug\MaraudersMap.exe.config
 C:\src\Concordia\MaraudersMap\MaraudersMap\bin\Debug\MaraudersMap.exe
 C:\src\Concordia\MaraudersMap\MaraudersMap\bin\Debug\MaraudersMap.pdb
-C:\src\Concordia\MaraudersMap\MaraudersMap\obj\Debug\MaraudersMap.csprojResolveAssemblyReference.cache
+C:\src\Concordia\MaraudersMap\MaraudersMap\bin\Debug\Microsoft.mshtml.dll
 C:\src\Concordia\MaraudersMap\MaraudersMap\obj\Debug\MainWindow.g.cs
 C:\src\Concordia\MaraudersMap\MaraudersMap\obj\Debug\App.g.cs
 C:\src\Concordia\MaraudersMap\MaraudersMap\obj\Debug\MaraudersMap_MarkupCompile.cache
@@ -12,4 +12,4 @@ C:\src\Concordia\MaraudersMap\MaraudersMap\obj\Debug\MaraudersMap.Properties.Res
 C:\src\Concordia\MaraudersMap\MaraudersMap\obj\Debug\MaraudersMap.csproj.GenerateResource.Cache
 C:\src\Concordia\MaraudersMap\MaraudersMap\obj\Debug\MaraudersMap.exe
 C:\src\Concordia\MaraudersMap\MaraudersMap\obj\Debug\MaraudersMap.pdb
-C:\src\Concordia\MaraudersMap\MaraudersMap\bin\Debug\Microsoft.mshtml.dll
+C:\src\Concordia\MaraudersMap\MaraudersMap\obj\Debug\MaraudersMap.csprojResolveAssemblyReference.cache

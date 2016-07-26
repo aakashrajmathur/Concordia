@@ -66,28 +66,58 @@ namespace MaraudersMap
 
             Dictionary<int, string> textDisplayed = GetTextDisplayedWithIndex(webPageSource);
             Dictionary<int, string> linksEmbeded = GetLinksEmbeddedWithIndex(webPageSource);
-            //foreach (int i in linksEmbeded.Keys)
-            //{
-            //    listBoxLiveEvents.Items.Add(i + " = " + linksEmbeded[i]);
-            //}
+            foreach (int i in linksEmbeded.Keys)
+            {
+                listBoxLiveEvents.Items.Add(i + " = " + linksEmbeded[i]);
+            }
+
+            string[] supportedSports = { "Baseball", "Tennis", "Basketball", "Football", "Hockey", "Cricket" };
 
             string currentSport = "";
 
-            foreach (int i in textDisplayed.Keys)
+            for(int i=0; i < textDisplayed.Keys.Count; i++)  // in textDisplayed.Keys)
             {
-                if (sportsCategories.Contains(textDisplayed[i]))
+                int currentKey = textDisplayed.Keys.ElementAt(i);
+                if (sportsCategories.Contains(textDisplayed[currentKey]))
                 {
-                    currentSport = textDisplayed[i];
+                    currentSport = textDisplayed[currentKey];
                 }
-                listBoxFinishedEvents.Items.Add(i + " = " + textDisplayed[i] + " , current sport = " + currentSport);
+                listBoxFinishedEvents.Items.Add(currentKey + " = " + textDisplayed[currentKey] + " , current sport = " + currentSport);
+
+                if (supportedSports.Contains(currentSport) && ((textDisplayed[currentKey].CompareTo("@") ==0) || (textDisplayed[currentKey].ToUpper().CompareTo("VS") == 0)))
+                {
+                    string teamA = textDisplayed[textDisplayed.Keys.ElementAt(i - 1)];
+                    string teamB = textDisplayed[textDisplayed.Keys.ElementAt(i + 1)];
+                    Uri link = GetLinkToGame(currentKey, linksEmbeded);
+                    Game game = new MaraudersMap.Game(teamA, teamB, link, currentSport);
+                    liveEvents.Add(game);
+                }
+
             }
             
             return liveEvents;
         }
 
+        private Uri GetLinkToGame(int currentIndex, Dictionary<int, string> linksEmbeded)
+        {
+
+            string firstHalf = @"https://sports.bovada.lv/";
+            //Format of the link = live-betting/event/2486513
+
+            string secondHalf = ""; 
+            foreach(int currentKey in linksEmbeded.Keys)
+            {
+                secondHalf = linksEmbeded[currentKey];
+                if (currentKey > currentIndex)
+                    break; 
+            }
+            //MessageBox.Show(firstHalf + secondHalf);
+            return new Uri(firstHalf + secondHalf);
+        }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            mainPageWebBrowser.Navigate(new Uri("https://sports.bovada.lv/live-betting/event/2486127")); //"https://sports.bovada.lv/")); //
+            mainPageWebBrowser.Navigate(new Uri("https://sports.bovada.lv/live-betting")); 
             timer.Start();
         }
 

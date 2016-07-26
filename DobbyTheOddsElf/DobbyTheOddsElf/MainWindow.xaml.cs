@@ -70,12 +70,13 @@ namespace DobbyTheOddsElf
         {  
             List<string> processedWebSource = GetProcessedWebSource(readWebPageSource());
 
-            if (processedWebSource.Contains(metricTextBox.Text.ToString(), StringComparer.OrdinalIgnoreCase))
+            if (processedWebSource.Contains("Moneyline", StringComparer.OrdinalIgnoreCase) || processedWebSource.Contains("Match winner", StringComparer.OrdinalIgnoreCase))
             {
+                string currentMetric = processedWebSource.Contains("Moneyline", StringComparer.OrdinalIgnoreCase) ? "Moneyline" : "Match winner";
                 string teamA = GetTeamName(textBoxTeam1.Text);
                 string teamB = GetTeamName(textBoxTeam2.Text);
 
-                int index = processedWebSource.FindIndex(new Predicate<string>(item => item.ToUpper() == metricTextBox.Text.ToUpper()));
+                int index = processedWebSource.FindIndex(new Predicate<string>(item => item.ToUpper() == currentMetric.ToUpper()));
                 if( Validate(processedWebSource[index+1], processedWebSource[index+2], teamA, teamB))
                 {
                     CreateRow(processedWebSource[index + 1], GetRate(processedWebSource[index + 2]));

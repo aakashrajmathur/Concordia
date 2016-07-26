@@ -12,24 +12,6 @@
     <Grid>
         <StackPanel Orientation="Vertical" Margin="0,12,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="2">
-                <Label x:Name="metricLabel" Content="Metric" 
-                       HorizontalAlignment="Center" Margin="5" 
-                       VerticalAlignment="Top" Width="67" 
-                       RenderTransformOrigin="-4.957,0.816" Height="24" 
-                       FontWeight="SemiBold" VerticalContentAlignment="Center" Padding="5,3,5,5" HorizontalContentAlignment="Right">
-                    <Label.Background>
-                        <SolidColorBrush Color="#CCFFFFFF"/>
-                    </Label.Background>
-                </Label>
-                <TextBox x:Name="metricTextBox" 
-                         HorizontalAlignment="Center" Height="24" 
-                         Margin="5" TextWrapping="Wrap" Text="Match Winner" VerticalAlignment="Top" Width="408" VerticalContentAlignment="Center">
-                    <TextBox.Background>
-                        <SolidColorBrush Color="#CCFFFFFF"/>
-                    </TextBox.Background>
-                </TextBox>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="2">
                 <Label x:Name="label1" Content="Team 1" 
                        HorizontalAlignment="Center" Margin="5"
                        VerticalAlignment="Top" Width="67" 

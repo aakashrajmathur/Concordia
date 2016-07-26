@@ -22,15 +22,21 @@ namespace DobbyTheOddsElf
         public MainWindow()
         {
             InitializeComponent();
-            NavigateMainWebBrowser();
             timer = new Timer(TIMER_DURATION);
             timer.Elapsed += new ElapsedEventHandler(timerElapsed);
             CreateSQLiteDatabase();
 
             string[] args = Environment.GetCommandLineArgs();
-            foreach(string s in args)
+            if (args.Count() == 1)
             {
-                // MessageBox.Show(s);
+                NavigateMainWebBrowser("https://sports.bovada.lv/live-betting/");
+            }
+            else
+            {
+                NavigateMainWebBrowser(args[3]);
+                textBoxTeam1.Text = args[1];
+                textBoxTeam2.Text = args[2];
+                timer.Start();
             }
         }
 
@@ -61,6 +67,7 @@ namespace DobbyTheOddsElf
 
         private void timerElapsed(object sender, ElapsedEventArgs e)
         {
+            //MessageBox.Show("timer elapsed");
             Dispatcher.Invoke(new Action(() =>  {
                                                     ReportRates();
                                                 }));
@@ -138,20 +145,12 @@ namespace DobbyTheOddsElf
             }
             sqlconn.Close();
         }
-
-        private void urlTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                NavigateMainWebBrowser();
-            }
-        }
-
-        private void NavigateMainWebBrowser()
+        
+        private void NavigateMainWebBrowser(string link)
         {
             try
             {
-                mainWebBrowser.Navigate("https://sports.bovada.lv/live-betting/");
+                mainWebBrowser.Navigate(link);//"https://sports.bovada.lv/live-betting/");
             }
             catch (Exception ex)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -22,6 +23,7 @@ namespace MaraudersMap
     /// </summary>
     public partial class MainWindow : Window
     {
+        const string filepathToDobby = @"C:\src\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\bin\Debug\DobbyTheOddsElf.exe";                                                                                                    
         const int TIMER_DURATION = 6000;
         System.Timers.Timer timer;
 
@@ -41,13 +43,49 @@ namespace MaraudersMap
 
         private void TimerElapsed(object sender, ElapsedEventArgs e)
         {
-            timer.Stop();
+            MessageBox.Show(currentLiveEvents.Count + " original games");
+            //timer.Stop();
 
             Dispatcher.Invoke(new Action(() =>
             {
                 //TODO: scrap the webpage for current live events, compare with existing -> create list of new events, list of ended events, foreach new event -> create a dobby, foreach eneded event -> do analysis & add to records.
                 List<Game> updatedLiveEvents = GetLiveEvents();
+                MessageBox.Show(updatedLiveEvents.Count + " updated games");
+
+                List<Game> newGames = GetDiff(updatedLiveEvents, currentLiveEvents);
+                MessageBox.Show(newGames.Count + " games just started.");
+                List<Game> endedGames = GetDiff(currentLiveEvents, updatedLiveEvents);
+                MessageBox.Show(endedGames.Count + " games ended.");
+                
+                foreach(Game game in newGames)
+                {
+                    //Start Dobby:
+                    ProcessStartInfo startInfo = new ProcessStartInfo
+                    {
+                        Arguments = @"""" + game.teamAName + @"""" + @" """ + game.teamBName + @"""" + @" """ + game.linkToLiveWebPage.ToString() + @"""",
+                        FileName = filepathToDobby
+                    };
+                    Process process = Process.Start(startInfo);
+                    TrackedEvent trackedEvent = new TrackedEvent(game, process); 
+                    
+                }
+
+
+                currentLiveEvents = new List<Game>(updatedLiveEvents);
             }));
+        }
+
+        private List<Game> GetDiff(List<Game> listSource, List<Game> listToCompare)
+        {
+            List<Game> result = new List<Game>();
+            foreach(Game game in listSource)
+            {
+                if (!listToCompare.Contains(game))
+                {
+                    result.Add(game);
+                }
+            }
+            return result;
         }
 
         private List<Game> GetLiveEvents()
@@ -62,29 +100,28 @@ namespace MaraudersMap
             int endingIndex = webPageSource.IndexOf("Upcoming") + 9;
 
             webPageSource = webPageSource.Substring(startingIndex, (endingIndex - startingIndex));
-
-
+            
             Dictionary<int, string> textDisplayed = GetTextDisplayedWithIndex(webPageSource);
             Dictionary<int, string> linksEmbeded = GetLinksEmbeddedWithIndex(webPageSource);
-            foreach (int i in linksEmbeded.Keys)
-            {
-                listBoxLiveEvents.Items.Add(i + " = " + linksEmbeded[i]);
-            }
+            //foreach (int i in linksEmbeded.Keys)
+            //{
+            //    listBoxLiveEvents.Items.Add(i + " = " + linksEmbeded[i]);
+            //}
 
             string[] supportedSports = { "Baseball", "Tennis", "Basketball", "Football", "Hockey", "Cricket" };
 
             string currentSport = "";
 
-            for(int i=0; i < textDisplayed.Keys.Count; i++)  // in textDisplayed.Keys)
+            for (int i = 0; i < textDisplayed.Keys.Count; i++)  // in textDisplayed.Keys)
             {
                 int currentKey = textDisplayed.Keys.ElementAt(i);
                 if (sportsCategories.Contains(textDisplayed[currentKey]))
                 {
                     currentSport = textDisplayed[currentKey];
                 }
-                listBoxFinishedEvents.Items.Add(currentKey + " = " + textDisplayed[currentKey] + " , current sport = " + currentSport);
+                //listBoxFinishedEvents.Items.Add(currentKey + " = " + textDisplayed[currentKey] + " , current sport = " + currentSport);
 
-                if (supportedSports.Contains(currentSport) && ((textDisplayed[currentKey].CompareTo("@") ==0) || (textDisplayed[currentKey].ToUpper().CompareTo("VS") == 0)))
+                if (supportedSports.Contains(currentSport) && ((textDisplayed[currentKey].CompareTo("@") == 0) || (textDisplayed[currentKey].ToUpper().CompareTo("VS") == 0)))
                 {
                     string teamA = textDisplayed[textDisplayed.Keys.ElementAt(i - 1)];
                     string teamB = textDisplayed[textDisplayed.Keys.ElementAt(i + 1)];
@@ -92,9 +129,7 @@ namespace MaraudersMap
                     Game game = new MaraudersMap.Game(teamA, teamB, link, currentSport);
                     liveEvents.Add(game);
                 }
-
             }
-            
             return liveEvents;
         }
 

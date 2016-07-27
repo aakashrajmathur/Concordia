@@ -80,8 +80,8 @@ namespace DobbyTheOddsElf
             if (processedWebSource.Contains("Moneyline", StringComparer.OrdinalIgnoreCase) || processedWebSource.Contains("Match winner", StringComparer.OrdinalIgnoreCase))
             {
                 string currentMetric = processedWebSource.Contains("Moneyline", StringComparer.OrdinalIgnoreCase) ? "Moneyline" : "Match winner";
-                string teamA = GetTeamName(textBoxTeam1.Text);
-                string teamB = GetTeamName(textBoxTeam2.Text);
+                string teamA = GetTeamName(textBoxTeam1.Text, processedWebSource);
+                string teamB = GetTeamName(textBoxTeam2.Text, processedWebSource);
 
                 int index = processedWebSource.FindIndex(new Predicate<string>(item => item.ToUpper() == currentMetric.ToUpper()));
                 if( Validate(processedWebSource[index+1], processedWebSource[index+2], teamA, teamB))
@@ -93,6 +93,54 @@ namespace DobbyTheOddsElf
                     CreateRow(processedWebSource[index + 3], GetRate(processedWebSource[index + 4]));
                 }
             }
+        }
+
+        private string GetTeamName(string teamName, List<string> processedWebSource)
+        {
+            //Place to add any validations in the future.
+            //"ST Kitts &amp; Nevis Patriots"
+            teamName = teamName.Replace("&", "&amp;");
+            teamName = GetFullDisplayName(teamName, processedWebSource);
+            return teamName;
+        }
+        
+        private string GetFullDisplayName(string input, List<string> processedWebSource)
+        {
+            string[] tokens = input.Split(' ');
+            foreach (string s in tokens)
+            {
+                if (s.Length > 4)
+                {
+                    string fullName = GetNameInList(s, processedWebSource);
+                    if (fullName.Length > 0)
+                    {
+                        return fullName;
+                    }
+                }
+            }
+            return "";
+        }
+
+        private string GetNameInList(string input, List<string> processedWebSource)
+        {
+            //MessageBox.Show("looking for " + input);
+            //Skip till upcoming: 
+            bool upcomingSectionSeen = false;
+            foreach (string s in processedWebSource)
+            {
+                if (s.CompareTo("Upcoming") == 0)
+                {
+                    upcomingSectionSeen = true; continue;
+                }
+                if (upcomingSectionSeen)
+                {
+                    if (s.Contains(input))
+                    {
+                        return s;
+                    }
+                }
+            }
+            return "";
         }
 
         private bool Validate(string webInputTeamName, string webInputRate, string userTeamNameA, string userTeamNameB)
@@ -118,16 +166,7 @@ namespace DobbyTheOddsElf
             
             return rate;
         }
-
-        private string GetTeamName(string teamName)
-        {
-            //Place to add any validations in the future.
-            //"ST Kitts &amp; Nevis Patriots"
-            teamName = teamName.Replace("&", "&amp;");
-
-            return teamName;
-        }
-
+       
         public void CreateRow(string team, string rate)
         {
             sqlconn.Open();

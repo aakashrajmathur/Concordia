@@ -66,11 +66,8 @@ namespace MaraudersMap
                         FileName = filepathToDobby
                     };
                     Process process = Process.Start(startInfo);
-                    TrackedEvent trackedEvent = new TrackedEvent(game, process); 
-                    
+                    TrackedEvent trackedEvent = new TrackedEvent(game, process);                     
                 }
-
-
                 currentLiveEvents = new List<Game>(updatedLiveEvents);
             }));
         }

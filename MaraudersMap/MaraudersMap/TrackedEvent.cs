@@ -11,11 +11,13 @@ namespace MaraudersMap
     {
         Game game;
         Process processHandle;
+        DateTime startDateTime;
 
         public TrackedEvent(Game game, Process process)
         {
             this.game = game;
             this.processHandle = process;
+            this.startDateTime = DateTime.Now;
         }
     }
 }

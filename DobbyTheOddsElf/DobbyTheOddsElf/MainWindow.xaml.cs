@@ -17,7 +17,7 @@ namespace DobbyTheOddsElf
         Timer timer;
         const int TIMER_DURATION = 5000;
         SQLiteConnection sqlconn;
-        public static string URL; 
+        public static string databaseName; 
 
         public MainWindow()
         {
@@ -36,6 +36,7 @@ namespace DobbyTheOddsElf
                 NavigateMainWebBrowser(args[3]);
                 textBoxTeam1.Text = args[1];
                 textBoxTeam2.Text = args[2];
+                databaseName = args[4];
                 timer.Start();
             }
         }
@@ -62,7 +63,10 @@ namespace DobbyTheOddsElf
         private string GetDatabaseName()
         {
             //Objective: Give Database a unique name, Convention: date time + processID: 
-            return DateTime.Now.ToString("yyyy_MM_dd_HH_mm");
+            if (databaseName == null)
+                return DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss");
+            else
+                return databaseName;
         }
 
         private void timerElapsed(object sender, ElapsedEventArgs e)

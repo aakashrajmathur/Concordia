@@ -59,17 +59,23 @@ namespace MaraudersMap
                 
                 foreach(Game game in newGames)
                 {
+                    string databaseName = GetDatabaseName();
                     //Start Dobby:
                     ProcessStartInfo startInfo = new ProcessStartInfo
                     {
-                        Arguments = @"""" + game.teamAName + @"""" + @" """ + game.teamBName + @"""" + @" """ + game.linkToLiveWebPage.ToString() + @"""",
+                        Arguments = @"""" + game.teamAName + @"""" + @" """ + game.teamBName + @"""" + @" """ + game.linkToLiveWebPage.ToString() + @"""" + @" """ + databaseName + @"""",
                         FileName = filepathToDobby
                     };
                     Process process = Process.Start(startInfo);
-                    TrackedEvent trackedEvent = new TrackedEvent(game, process);                     
+                    TrackedEvent trackedEvent = new TrackedEvent(game, process, databaseName);                     
                 }
                 currentLiveEvents = new List<Game>(updatedLiveEvents);
             }));
+        }
+
+        private string GetDatabaseName()
+        {
+            return DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss");
         }
 
         private List<Game> GetDiff(List<Game> listSource, List<Game> listToCompare)

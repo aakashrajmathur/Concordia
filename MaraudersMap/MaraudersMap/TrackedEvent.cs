@@ -9,8 +9,8 @@ namespace MaraudersMap
 {
     class TrackedEvent
     {
-        Game game;
-        Process processHandle;
+        public Game game;
+        public Process processHandle;
         DateTime startDateTime;
         string databaseName; 
 

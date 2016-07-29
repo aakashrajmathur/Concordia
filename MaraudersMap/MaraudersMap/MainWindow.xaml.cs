@@ -28,6 +28,8 @@ namespace MaraudersMap
         System.Timers.Timer timer;
 
         List<Game> currentLiveEvents;
+        List<TrackedEvent> currentTrackedEvents;
+        List<TrackedEvent> completedEvents;
         HashSet<string> sportsCategories; 
         
         public MainWindow()
@@ -35,6 +37,8 @@ namespace MaraudersMap
             timer = new System.Timers.Timer(TIMER_DURATION);
             timer.Elapsed += new ElapsedEventHandler(TimerElapsed);
             currentLiveEvents = new List<Game>();
+            currentTrackedEvents = new List<TrackedEvent>();
+            completedEvents = new List<TrackedEvent>();
             string[] sportsList = { "Baseball", "Soccer", "Tennis", "Basketball", "UFC/MMA", "Golf", "Football", "Hockey", "Cricket", "Horse Racing ", "Boxing", "Motor Sports", "E-Sports", "Olympic Games", "Politics", "Rugby League", "Darts", "Snooker", "Volleyball", "Beach Volleyball", "Handball", "Winter Sports" };
             sportsCategories = new HashSet<string>(sportsList);
 
@@ -43,21 +47,28 @@ namespace MaraudersMap
 
         private void TimerElapsed(object sender, ElapsedEventArgs e)
         {
-            MessageBox.Show(currentLiveEvents.Count + " original games");
+            //MessageBox.Show(currentLiveEvents.Count + " original games");
             //timer.Stop();
 
             Dispatcher.Invoke(new Action(() =>
             {
                 //TODO: scrap the webpage for current live events, compare with existing -> create list of new events, list of ended events, foreach new event -> create a dobby, foreach eneded event -> do analysis & add to records.
                 List<Game> updatedLiveEvents = GetLiveEvents();
-                MessageBox.Show(updatedLiveEvents.Count + " updated games");
+                //MessageBox.Show(updatedLiveEvents.Count + " updated games");
+                listBoxLiveEvents.Items.Clear();
+                foreach(Game game in updatedLiveEvents)
+                {
+                    listBoxLiveEvents.Items.Add(game.sport + " - " + game.teamAName + " vs " + game.teamBName);
+                } 
 
                 List<Game> newGames = GetDiff(updatedLiveEvents, currentLiveEvents);
-                MessageBox.Show(newGames.Count + " games just started.");
+                //MessageBox.Show(newGames.Count + " games just started.");
                 List<Game> endedGames = GetDiff(currentLiveEvents, updatedLiveEvents);
-                MessageBox.Show(endedGames.Count + " games ended.");
-                
-                foreach(Game game in newGames)
+                //MessageBox.Show(endedGames.Count + " games ended.");
+
+                currentLiveEvents = new List<Game>(updatedLiveEvents);
+
+                foreach (Game game in newGames)
                 {
                     string databaseName = GetDatabaseName();
                     //Start Dobby:
@@ -67,10 +78,32 @@ namespace MaraudersMap
                         FileName = filepathToDobby
                     };
                     Process process = Process.Start(startInfo);
-                    TrackedEvent trackedEvent = new TrackedEvent(game, process, databaseName);                     
+                    TrackedEvent trackedEvent = new TrackedEvent(game, process, databaseName);
+                    currentTrackedEvents.Add(trackedEvent);               
                 }
-                currentLiveEvents = new List<Game>(updatedLiveEvents);
+                foreach(Game game in endedGames)
+                {
+                    listBoxFinishedEvents.Items.Add(game.sport + " - " + game.teamAName + " vs " + game.teamBName);
+                    TrackedEvent trackedEvent = GetTrackedEventGivenTheGame(game);
+                    trackedEvent.processHandle.Kill();
+                    currentTrackedEvents.Remove(trackedEvent);
+                    //Run Analysis: 
+                    completedEvents.Add(trackedEvent);
+                }
+                
             }));
+        }
+
+        private TrackedEvent GetTrackedEventGivenTheGame(Game game)
+        {
+            foreach (TrackedEvent t in currentTrackedEvents)
+            {
+                if (t.game.CompareTo(game) == 0)
+                {
+                    return t;
+                }
+            }
+            return null;
         }
 
         private string GetDatabaseName()
@@ -145,11 +178,12 @@ namespace MaraudersMap
             string secondHalf = ""; 
             foreach(int currentKey in linksEmbeded.Keys)
             {
-                secondHalf = linksEmbeded[currentKey];
                 if (currentKey > currentIndex)
-                    break; 
+                    return new Uri(firstHalf + secondHalf);
+
+
+                secondHalf = linksEmbeded[currentKey];
             }
-            //MessageBox.Show(firstHalf + secondHalf);
             return new Uri(firstHalf + secondHalf);
         }
 

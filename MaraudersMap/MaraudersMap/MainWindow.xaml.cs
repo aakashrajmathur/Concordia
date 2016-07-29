@@ -19,8 +19,9 @@ namespace MaraudersMap
         List<Game> currentLiveEvents;
         List<TrackedEvent> currentTrackedEvents;
         List<TrackedEvent> completedEvents;
-        HashSet<string> sportsCategories; 
-        
+        HashSet<string> sportsCategories;
+        int counter;
+
         public MainWindow()
         {
             timer = new System.Timers.Timer(TIMER_DURATION);
@@ -30,7 +31,7 @@ namespace MaraudersMap
             completedEvents = new List<TrackedEvent>();
             string[] sportsList = { "Baseball", "Soccer", "Tennis", "Basketball", "UFC/MMA", "Golf", "Football", "Hockey", "Cricket", "Horse Racing ", "Boxing", "Motor Sports", "E-Sports", "Olympic Games", "Politics", "Rugby League", "Darts", "Snooker", "Volleyball", "Beach Volleyball", "Handball", "Winter Sports" };
             sportsCategories = new HashSet<string>(sportsList);
-
+            counter = 0;
             InitializeComponent();
         }
 
@@ -81,7 +82,7 @@ namespace MaraudersMap
                     trackedEvent.processHandle.Kill();
                     currentTrackedEvents.Remove(trackedEvent);
                 }
-                
+                counterLabel.Content = counter++; 
             }));
         }
 

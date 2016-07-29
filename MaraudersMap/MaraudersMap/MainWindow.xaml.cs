@@ -24,7 +24,7 @@ namespace MaraudersMap
     public partial class MainWindow : Window
     {
         const string filepathToDobby = @"C:\src\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\bin\Debug\DobbyTheOddsElf.exe";                                                                                                    
-        const int TIMER_DURATION = 6000;
+        const int TIMER_DURATION = 60000;
         System.Timers.Timer timer;
 
         List<Game> currentLiveEvents;

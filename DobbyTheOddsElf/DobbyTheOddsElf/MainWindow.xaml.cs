@@ -14,11 +14,13 @@ namespace DobbyTheOddsElf
     /// </summary>
     public partial class MainWindow : Window
     {
-        Timer timer;
         const int TIMER_DURATION = 5000;
+        const int MINIMUM_LENGTH_OF_TEAM_NAME = 4;
+
+        Timer timer;
         SQLiteConnection sqlconn;
         public static string databaseName; 
-
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -113,7 +115,7 @@ namespace DobbyTheOddsElf
             string[] tokens = input.Split(' ');
             foreach (string s in tokens)
             {
-                if (s.Length > 4)
+                if (s.Length >= MINIMUM_LENGTH_OF_TEAM_NAME)
                 {
                     string fullName = GetNameInList(s, processedWebSource);
                     if (fullName.Length > 0)

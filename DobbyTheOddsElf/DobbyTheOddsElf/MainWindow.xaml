@@ -61,7 +61,7 @@
             </StackPanel>
         </StackPanel>
 
-        <WebBrowser x:Name="mainWebBrowser" Margin="10,185,423.2,9.8"/>
-        <ListBox x:Name="listBoxQuerySubmitted" Margin="0,185,9.2,9.8" HorizontalAlignment="Right" Width="409" Background="#BFFFFFFF"/>
+        <WebBrowser x:Name="mainWebBrowser" Margin="10,185,713,10"/>
+        <ListBox x:Name="listBoxQuerySubmitted" Margin="0,185,9,10" HorizontalAlignment="Right" Width="699" Background="#BFFFFFFF"/>
     </Grid>
 </Window>

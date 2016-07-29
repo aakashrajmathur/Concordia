@@ -24,7 +24,7 @@ namespace MaraudersMap
     public partial class MainWindow : Window
     {
         const string filepathToDobby = @"C:\src\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\bin\Debug\DobbyTheOddsElf.exe";                                                                                                    
-        const int TIMER_DURATION = 60000;
+        const int TIMER_DURATION = 12000;
         System.Timers.Timer timer;
 
         List<Game> currentLiveEvents;
@@ -61,9 +61,9 @@ namespace MaraudersMap
                     listBoxLiveEvents.Items.Add(game.sport + " - " + game.teamAName + " vs " + game.teamBName);
                 } 
 
-                List<Game> newGames = GetDiff(updatedLiveEvents, currentLiveEvents);
+                List<Game> newGames = GetNewGames(updatedLiveEvents, currentLiveEvents);
                 //MessageBox.Show(newGames.Count + " games just started.");
-                List<Game> endedGames = GetDiff(currentLiveEvents, updatedLiveEvents);
+                List<Game> endedGames = GetEndedGames(updatedLiveEvents, currentLiveEvents);
                 //MessageBox.Show(endedGames.Count + " games ended.");
 
                 currentLiveEvents = new List<Game>(updatedLiveEvents);
@@ -85,10 +85,12 @@ namespace MaraudersMap
                 {
                     listBoxFinishedEvents.Items.Add(game.sport + " - " + game.teamAName + " vs " + game.teamBName);
                     TrackedEvent trackedEvent = GetTrackedEventGivenTheGame(game);
-                    trackedEvent.processHandle.Kill();
-                    currentTrackedEvents.Remove(trackedEvent);
+                    
                     //Run Analysis: 
                     completedEvents.Add(trackedEvent);
+                    
+                    trackedEvent.processHandle.Kill();
+                    currentTrackedEvents.Remove(trackedEvent);
                 }
                 
             }));
@@ -111,14 +113,27 @@ namespace MaraudersMap
             return DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss");
         }
 
-        private List<Game> GetDiff(List<Game> listSource, List<Game> listToCompare)
+        private List<Game> GetNewGames(List<Game> updatedLiveEvents, List<Game> currentLiveEvents)
         {
-            List<Game> result = new List<Game>();
-            foreach(Game game in listSource)
+            List<Game> result = new List<Game>(updatedLiveEvents); 
+            foreach(Game game in currentLiveEvents)
             {
-                if (!listToCompare.Contains(game))
+                if (updatedLiveEvents.Contains(game))
                 {
-                    result.Add(game);
+                    result.Remove(game);
+                }
+            }
+            return result;
+        }
+
+        private List<Game> GetEndedGames(List<Game> updatedLiveEvents, List<Game> currentLiveEvents)
+        {
+            List<Game> result = new List<Game>(currentLiveEvents);
+            foreach(Game game in updatedLiveEvents)
+            {
+                if (updatedLiveEvents.Contains(game))
+                {
+                    result.Remove(game);
                 }
             }
             return result;

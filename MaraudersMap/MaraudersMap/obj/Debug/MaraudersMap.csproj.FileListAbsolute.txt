@@ -12,4 +12,3 @@ C:\src\Concordia\MaraudersMap\MaraudersMap\obj\Debug\MaraudersMap.Properties.Res
 C:\src\Concordia\MaraudersMap\MaraudersMap\obj\Debug\MaraudersMap.csproj.GenerateResource.Cache
 C:\src\Concordia\MaraudersMap\MaraudersMap\obj\Debug\MaraudersMap.exe
 C:\src\Concordia\MaraudersMap\MaraudersMap\obj\Debug\MaraudersMap.pdb
-C:\src\Concordia\MaraudersMap\MaraudersMap\obj\Debug\MaraudersMap.csprojResolveAssemblyReference.cache

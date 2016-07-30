@@ -47,9 +47,10 @@ namespace MaraudersMap
                 
                 //MessageBox.Show(updatedLiveEvents.Count + " updated games");
                 listBoxLiveEvents.Items.Clear();
+                int count = 1;
                 foreach(Game game in updatedLiveEvents)
                 {
-                    listBoxLiveEvents.Items.Add(game.sport + " - " + game.teamAName + " vs " + game.teamBName);
+                    listBoxLiveEvents.Items.Add(count++ +". "+ game.sport + " - " + game.teamAName + " vs " + game.teamBName);
                 } 
 
                 List<Game> newGames = GetNewGames(updatedLiveEvents, currentLiveEvents);
@@ -74,7 +75,7 @@ namespace MaraudersMap
                 }
                 foreach(Game game in endedGames)
                 {
-                    MessageBox.Show("number of ended games = " + endedGames.Count);
+                    //MessageBox.Show("number of ended games = " + endedGames.Count);
                     listBoxFinishedEvents.Items.Add(game.sport + " - " + game.teamAName + " vs " + game.teamBName);
                     TrackedEvent trackedEvent = GetTrackedEventGivenTheGame(game);
                     

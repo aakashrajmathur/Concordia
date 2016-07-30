@@ -135,7 +135,7 @@ namespace DobbyTheOddsElf
                     string fullName = GetNameInList(s, processedWebSource);
                     if (fullName.Length > 0)
                     {
-                        return fullName;
+                        return fullName.TrimEnd().TrimStart();
                     }
                 }
             }
@@ -173,7 +173,8 @@ namespace DobbyTheOddsElf
 
         private bool Validate(string webInputTeamName, string webInputRate, string userTeamNameA, string userTeamNameB)
         {
-            if ((webInputTeamName.ToUpper().CompareTo(userTeamNameA.ToUpper()) != 0) && (webInputTeamName.ToUpper().CompareTo(userTeamNameB.ToUpper()) != 0))
+            if ((webInputTeamName.ToUpper().CompareTo(userTeamNameA.ToUpper()) != 0) && 
+                (webInputTeamName.ToUpper().CompareTo(userTeamNameB.ToUpper()) != 0))
                 return false;
 
             if (webInputRate.ToUpper().CompareTo("SUSPENDED") == 0)

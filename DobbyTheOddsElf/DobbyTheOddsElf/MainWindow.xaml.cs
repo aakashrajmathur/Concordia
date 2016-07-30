@@ -50,7 +50,7 @@ namespace DobbyTheOddsElf
             }
         }
 
-    private void CreateSQLiteDatabase()
+        private void CreateSQLiteDatabase()
         {
             sqlconn = new SQLiteConnection("Data Source=" + GetDatabaseLocation() + GetDatabaseName() + ".sqlite;Version=3;New=True;Compress=True;");
             sqlconn.Open();
@@ -155,9 +155,16 @@ namespace DobbyTheOddsElf
                 }
                 if (upcomingSectionSeen)
                 {
-                    if (s.Contains(input))
+                    if (s.IndexOf(input, StringComparison.OrdinalIgnoreCase) >= 0)  //Case insensitive CONTAINS
                     {
-                        return s;
+                        string[] delimiter = new string[] { "vs", "@" };
+                        string[] tokens = s.Split(delimiter, StringSplitOptions.None);
+
+                        foreach(string token in tokens)
+                        {
+                            if (token.IndexOf(input, StringComparison.OrdinalIgnoreCase) >= 0)
+                                return token;
+                        }
                     }
                 }
             }

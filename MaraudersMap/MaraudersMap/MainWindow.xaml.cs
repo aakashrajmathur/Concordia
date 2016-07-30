@@ -100,14 +100,23 @@ namespace MaraudersMap
             return null;
         }
 
+        private string GetClensedString(string input, string replacementText = "")
+        {
+            return System.Text.RegularExpressions.Regex.Replace(input, @"[^0-9a-zA-Z]+", replacementText);
+        }
+
+        private string GetQuotedString(string input)
+        {
+            return @"""" + input + @"""";
+        }
+
         private string GetDatabaseName(Game game)
         {
-            string databaseName = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_") + game.sport + "_" + game.teamAName + "_vs_" + game.teamBName;
-            databaseName = databaseName.Replace(" ", "");
-            databaseName = databaseName.Replace("&", "_");
-            databaseName = databaseName.Replace(";", "");
+            string databaseName = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_");
 
-            return @"""" + databaseName + @"""";
+            databaseName += GetClensedString(game.sport) + "_" + GetClensedString(game.teamAName) + "_vs_" + GetClensedString(game.teamBName);
+            databaseName = databaseName.Replace(" ", "");
+            return GetQuotedString(databaseName);
         }
 
         private List<Game> GetNewGames(List<Game> newList, List<Game> existingList)

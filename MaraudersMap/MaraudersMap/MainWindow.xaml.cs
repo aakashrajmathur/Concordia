@@ -44,6 +44,18 @@ namespace MaraudersMap
             {
                 //TODO: scrap the webpage for current live events, compare with existing -> create list of new events, list of ended events, foreach new event -> create a dobby, foreach eneded event -> do analysis & add to records.
                 List<Game> updatedLiveEvents = GetLiveEvents();
+
+                //////FOR TESTING
+                if (counter == 5)
+                {
+                    updatedLiveEvents.RemoveAt(3);
+
+                    updatedLiveEvents.RemoveAt(5);
+                }
+                //////END FOR TESTING
+
+
+
                 //MessageBox.Show(updatedLiveEvents.Count + " updated games");
                 listBoxLiveEvents.Items.Clear();
                 foreach(Game game in updatedLiveEvents)
@@ -73,6 +85,7 @@ namespace MaraudersMap
                 }
                 foreach(Game game in endedGames)
                 {
+                    MessageBox.Show("number of ended games = " + endedGames.Count);
                     listBoxFinishedEvents.Items.Add(game.sport + " - " + game.teamAName + " vs " + game.teamBName);
                     TrackedEvent trackedEvent = GetTrackedEventGivenTheGame(game);
                     
@@ -108,12 +121,12 @@ namespace MaraudersMap
             return @"""" + databaseName + @"""";
         }
 
-        private List<Game> GetNewGames(List<Game> updatedLiveEvents, List<Game> currentLiveEvents)
+        private List<Game> GetNewGames(List<Game> newList, List<Game> existingList)
         {
-            List<Game> result = new List<Game>(updatedLiveEvents); 
-            foreach(Game game in currentLiveEvents)
+            List<Game> result = new List<Game>(newList); 
+            foreach(Game game in existingList)
             {
-                if (updatedLiveEvents.Contains(game))
+                if (result.Contains(game))
                 {
                     result.Remove(game);
                 }
@@ -121,14 +134,14 @@ namespace MaraudersMap
             return result;
         }
 
-        private List<Game> GetEndedGames(List<Game> updatedLiveEvents, List<Game> currentLiveEvents)
+        private List<Game> GetEndedGames(List<Game> newList, List<Game> existingList)
         {
             //Games present in current but not in updated:
 
-            List<Game> result = new List<Game>(currentLiveEvents);
-            foreach(Game game in updatedLiveEvents)
+            List<Game> result = new List<Game>(existingList);
+            foreach(Game game in newList)
             {
-                if (updatedLiveEvents.Contains(game))
+                if (result.Contains(game))
                 {
                     result.Remove(game);
                 }

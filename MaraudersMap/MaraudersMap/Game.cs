@@ -24,23 +24,22 @@ namespace MaraudersMap
 
         public int CompareTo(Game other)
         {
-            
-            int result =  this.teamAName.CompareTo(other.teamAName) + 
-                this.teamAName.CompareTo(other.teamAName) + 
-                this.linkToLiveWebPage.ToString().CompareTo(other.linkToLiveWebPage.ToString()) +
-                this.sport.CompareTo(other.sport);
-            //MessageBox.Show("from compare, result = " + result);
-            return result;
+            if ((this.teamAName.CompareTo(other.teamAName) == 0) && 
+                (this.teamBName.CompareTo(other.teamBName) == 0) && 
+                (this.sport.CompareTo(other.sport) == 0))
+            {
+                return 0;
+            }
+            else {
+                return -1;
+            }               
         }
 
         public bool Equals(Game other)
         {
-            int result = this.teamAName.CompareTo(other.teamAName) +
-                this.teamAName.CompareTo(other.teamAName) +
-                this.linkToLiveWebPage.ToString().CompareTo(other.linkToLiveWebPage.ToString()) +
-                this.sport.CompareTo(other.sport);
-            //MessageBox.Show("from equals, result = " + result);
-            return result == 0;
+            return ((this.teamAName.CompareTo(other.teamAName) == 0) && 
+                    (this.teamBName.CompareTo(other.teamBName) == 0) && 
+                    (this.sport.CompareTo(other.sport) == 0));
         }
     }
 }

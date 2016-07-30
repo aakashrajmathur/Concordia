@@ -19,33 +19,40 @@ namespace DobbyTheOddsElf
 
         Timer timer;
         SQLiteConnection sqlconn;
-        public static string databaseName; 
-        
+        public static string databaseName;
+
         public MainWindow()
         {
-            InitializeComponent();
-            timer = new Timer(TIMER_DURATION);
-            timer.Elapsed += new ElapsedEventHandler(timerElapsed);
-            CreateSQLiteDatabase();
+            try
+            {
+                InitializeComponent();
+                timer = new Timer(TIMER_DURATION);
+                timer.Elapsed += new ElapsedEventHandler(timerElapsed);
 
-            string[] args = Environment.GetCommandLineArgs();
-            if (args.Count() == 1)
-            {
-                NavigateMainWebBrowser("https://sports.bovada.lv/live-betting/");
+                string[] args = Environment.GetCommandLineArgs();
+                if (args.Count() == 1)
+                {
+                    NavigateMainWebBrowser("https://sports.bovada.lv/live-betting/");
+                }
+                else
+                {
+                    NavigateMainWebBrowser(args[3]);
+                    textBoxTeam1.Text = args[1];
+                    textBoxTeam2.Text = args[2];
+                    databaseName = args[4];
+                    timer.Start();
+                }
+                CreateSQLiteDatabase();
+
             }
-            else
-            {
-                NavigateMainWebBrowser(args[3]);
-                textBoxTeam1.Text = args[1];
-                textBoxTeam2.Text = args[2];
-                databaseName = args[4];
-                timer.Start();
+            catch (Exception ex) {
+                MessageBox.Show(ex.Message);
             }
         }
 
-        private void CreateSQLiteDatabase()
+    private void CreateSQLiteDatabase()
         {
-            sqlconn = new SQLiteConnection("Data Source="+GetDatabaseLocation()+GetDatabaseName()+".sqlite;Version=3;New=True;Compress=True;");
+            sqlconn = new SQLiteConnection("Data Source=" + GetDatabaseLocation() + GetDatabaseName() + ".sqlite;Version=3;New=True;Compress=True;");
             sqlconn.Open();
             SQLiteCommand createQ = new SQLiteCommand("CREATE TABLE IF NOT EXISTS sportsLiveRates( DateTime TEXT, Team TEXT, Rate TEXT)", sqlconn);
             createQ.ExecuteNonQuery();
@@ -73,10 +80,18 @@ namespace DobbyTheOddsElf
 
         private void timerElapsed(object sender, ElapsedEventArgs e)
         {
-            //MessageBox.Show("timer elapsed");
-            Dispatcher.Invoke(new Action(() =>  {
-                                                    ReportRates();
-                                                }));
+            try
+            {
+                //MessageBox.Show("timer elapsed");
+                Dispatcher.Invoke(new Action(() =>
+                {
+                    ReportRates();
+                }));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void ReportRates()

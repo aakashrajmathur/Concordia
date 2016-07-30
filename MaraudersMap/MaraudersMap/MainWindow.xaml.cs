@@ -31,7 +31,7 @@ namespace MaraudersMap
             completedEvents = new List<TrackedEvent>();
             string[] sportsList = { "Baseball", "Soccer", "Tennis", "Basketball", "UFC/MMA", "Golf", "Football", "Hockey", "Cricket", "Horse Racing ", "Boxing", "Motor Sports", "E-Sports", "Olympic Games", "Politics", "Rugby League", "Darts", "Snooker", "Volleyball", "Beach Volleyball", "Handball", "Winter Sports" };
             sportsCategories = new HashSet<string>(sportsList);
-            counter = 0;
+            counter = 1;
             InitializeComponent();
         }
 
@@ -60,7 +60,7 @@ namespace MaraudersMap
 
                 foreach (Game game in newGames)
                 {
-                    string databaseName = GetDatabaseName();
+                    string databaseName = GetDatabaseName(game);
                     //Start Dobby:
                     ProcessStartInfo startInfo = new ProcessStartInfo
                     {
@@ -98,9 +98,14 @@ namespace MaraudersMap
             return null;
         }
 
-        private string GetDatabaseName()
+        private string GetDatabaseName(Game game)
         {
-            return DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss");
+            string databaseName = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_") + game.sport + "_" + game.teamAName + "_vs_" + game.teamBName;
+            databaseName = databaseName.Replace(" ", "");
+            databaseName = databaseName.Replace("&", "_");
+            databaseName = databaseName.Replace(";", "");
+
+            return @"""" + databaseName + @"""";
         }
 
         private List<Game> GetNewGames(List<Game> updatedLiveEvents, List<Game> currentLiveEvents)

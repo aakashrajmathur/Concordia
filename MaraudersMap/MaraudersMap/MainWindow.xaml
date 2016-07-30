@@ -5,21 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MaraudersMap"
         mc:Ignorable="d"
-        Title="MARAUDER'S MAP" Height="391.829" Width="525" Loaded="Window_Loaded">
+        Title="MARAUDER'S MAP" Height="600" Width="850" Loaded="Window_Loaded">
     <Window.Background>
         <ImageBrush ImageSource="MaraudersMap.jpg"/>
     </Window.Background>
     <Grid>
-        <Grid Margin="10,44,10.4,105.4">
+        <Grid Margin="10,75,10,175">
             <!-- Define Columns -->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <ListBox Grid.Column="0" x:Name="listBoxLiveEvents"  Width="auto" Opacity="0.75" Margin="0,0,5,0"/>
-            <ListBox Grid.Column="1" x:Name="listBoxFinishedEvents" Width="auto" Opacity="0.75" Margin="5,0,0,0"/>
+            <ListBox Grid.Column="0" x:Name="listBoxLiveEvents"  Width="auto" Opacity="0.75" Margin="0,10,5,10"/>
+            <ListBox Grid.Column="1" x:Name="listBoxFinishedEvents" Width="auto" Opacity="0.75" Margin="5,10,0,10"/>
         </Grid>
-        <WebBrowser x:Name="mainPageWebBrowser" Margin="10,0,10.4,10.4" Height="90" VerticalAlignment="Bottom"/>
+        <WebBrowser x:Name="mainPageWebBrowser" Margin="10,0,10,10" Height="160" VerticalAlignment="Bottom"/>
         <Label x:Name="counterLabel" Content="" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="87" HorizontalContentAlignment="Right"/>
     </Grid>
 </Window>

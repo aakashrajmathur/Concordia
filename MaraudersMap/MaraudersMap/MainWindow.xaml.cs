@@ -46,12 +46,12 @@ namespace MaraudersMap
                 //TODO: scrap the webpage for current live events, compare with existing -> create list of new events, list of ended events, foreach new event -> create a dobby, foreach eneded event -> do analysis & add to records.
                 List<Game> updatedLiveEvents = GetLiveEvents();
 
-                //For Testing: 
-                if (counter == 3)
-                {
-                    updatedLiveEvents.Clear();
-                }
-                //end Testing
+                ////For Testing: 
+                //if (counter == 3)
+                //{
+                //    updatedLiveEvents.Clear();
+                //}
+                ////end Testing
 
                 //MessageBox.Show(updatedLiveEvents.Count + " updated games");
                 listBoxLiveEvents.Items.Clear();

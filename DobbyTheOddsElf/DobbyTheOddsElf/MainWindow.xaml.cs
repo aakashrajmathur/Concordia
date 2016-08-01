@@ -40,6 +40,7 @@ namespace DobbyTheOddsElf
                     textBoxTeam1.Text = args[1];
                     textBoxTeam2.Text = args[2];
                     databaseName = args[4];
+                    WindowState = WindowState.Minimized; //Default Window state Minimized                    
                     timer.Start();
                 }
                 CreateSQLiteDatabase();
@@ -61,7 +62,7 @@ namespace DobbyTheOddsElf
 
         private string GetDatabaseLocation()
         {
-            string databaseLocation = "c:\\sports\\" + DateTime.Now.ToString("yyyy_MM_dd") +"\\";
+            string databaseLocation = "c:\\Data\\" + DateTime.Now.ToString("yyyy_MM_dd") +"\\";
             if (!Directory.Exists(databaseLocation))
             {
                 Directory.CreateDirectory(databaseLocation);

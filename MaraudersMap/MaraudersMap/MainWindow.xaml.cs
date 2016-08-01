@@ -13,7 +13,7 @@ namespace MaraudersMap
     public partial class MainWindow : Window
     {
         const string filepathToDobby = @"C:\src\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\bin\Debug\DobbyTheOddsElf.exe";
-        const string filepathOfEndedEventsDatabaseFiles = @"C:\sports\Ended\";
+        const string filepathOfEndedEventsDatabaseFiles = @"C:\Data\Ended\";
         const int TIMER_DURATION = 12000;
         System.Timers.Timer timer;
 
@@ -46,13 +46,13 @@ namespace MaraudersMap
                 //TODO: scrap the webpage for current live events, compare with existing -> create list of new events, list of ended events, foreach new event -> create a dobby, foreach eneded event -> do analysis & add to records.
                 List<Game> updatedLiveEvents = GetLiveEvents();
 
-                ////For Testing: 
-                //if(counter == 3)
-                //{
-                //    updatedLiveEvents.Clear();
-                //}
-                ////end Testing
-                
+                //For Testing: 
+                if (counter == 3)
+                {
+                    updatedLiveEvents.Clear();
+                }
+                //end Testing
+
                 //MessageBox.Show(updatedLiveEvents.Count + " updated games");
                 listBoxLiveEvents.Items.Clear();
                 int count = 1;
@@ -86,13 +86,12 @@ namespace MaraudersMap
                 }
                 foreach(Game game in endedGames)
                 {
-                    //MessageBox.Show("number of ended games = " + endedGames.Count);
-                    listBoxFinishedEvents.Items.Add(game.sport + " - " + game.teamAName + " vs " + game.teamBName);
                     TrackedEvent trackedEvent = GetTrackedEventGivenTheGame(game);
-                    
-                    //Run Analysis
-                    completedEvents.Add(trackedEvent);
+
+                    listBoxFinishedEvents.Items.Add(game.sport + " - " + game.teamAName + " vs " + game.teamBName + " started at "+ trackedEvent.startDateTime + ", ended at " + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss"));
                     MoveDatabaseFile(trackedEvent.databaseName);
+                    //Run Analysis
+                    completedEvents.Add(trackedEvent);                    
                     trackedEvent.processHandle.Kill();
                     currentTrackedEvents.Remove(trackedEvent);
                 }
@@ -107,8 +106,12 @@ namespace MaraudersMap
             databaseName += ".sqlite";
             
             string fileName = databaseName;
-            string sourcePath = @"C:\sports\" + databaseName.Substring(0, 10) + @"\";
+            string sourcePath = @"C:\Data\" + databaseName.Substring(0, 10) + @"\";
             string targetPath = filepathOfEndedEventsDatabaseFiles;
+            if (!System.IO.Directory.Exists(filepathOfEndedEventsDatabaseFiles))
+            {
+                System.IO.Directory.CreateDirectory(filepathOfEndedEventsDatabaseFiles);
+            }
 
             //if (System.IO.File.Exists(sourcePath+ fileName))
             //{
@@ -131,10 +134,8 @@ namespace MaraudersMap
                 System.IO.Directory.CreateDirectory(targetPath);
             }
 
-            // To copy a file to another location and 
-            // overwrite the destination file if it already exists.
-            System.IO.File.Copy(sourceFile, destFile, true);
-            System.IO.File.Delete(sourcePath);
+            // To move a file or folder to a new location:
+            System.IO.File.Move(sourceFile, destFile);
         }
 
         private TrackedEvent GetTrackedEventGivenTheGame(Game game)

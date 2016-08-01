@@ -12,7 +12,8 @@ namespace MaraudersMap
     /// </summary>
     public partial class MainWindow : Window
     {
-        const string filepathToDobby = @"C:\src\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\bin\Debug\DobbyTheOddsElf.exe";                                                                                                    
+        const string filepathToDobby = @"C:\src\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\bin\Debug\DobbyTheOddsElf.exe";
+        const string filepathOfEndedEventsDatabaseFiles = @"C:\sports\Ended\";
         const int TIMER_DURATION = 12000;
         System.Timers.Timer timer;
 
@@ -44,6 +45,13 @@ namespace MaraudersMap
             {
                 //TODO: scrap the webpage for current live events, compare with existing -> create list of new events, list of ended events, foreach new event -> create a dobby, foreach eneded event -> do analysis & add to records.
                 List<Game> updatedLiveEvents = GetLiveEvents();
+
+                ////For Testing: 
+                //if(counter == 3)
+                //{
+                //    updatedLiveEvents.Clear();
+                //}
+                ////end Testing
                 
                 //MessageBox.Show(updatedLiveEvents.Count + " updated games");
                 listBoxLiveEvents.Items.Clear();
@@ -66,7 +74,10 @@ namespace MaraudersMap
                     //Start Dobby:
                     ProcessStartInfo startInfo = new ProcessStartInfo
                     {
-                        Arguments = @"""" + game.teamAName + @"""" + @" """ + game.teamBName + @"""" + @" """ + game.linkToLiveWebPage.ToString() + @"""" + @" """ + databaseName + @"""",
+                        Arguments = @"""" + game.teamAName + @"""" + 
+                                    @" """ + game.teamBName + @"""" + 
+                                    @" """ + game.linkToLiveWebPage.ToString() + 
+                                    @"""" + @" """ + databaseName + @"""",
                         FileName = filepathToDobby
                     };
                     Process process = Process.Start(startInfo);
@@ -79,14 +90,51 @@ namespace MaraudersMap
                     listBoxFinishedEvents.Items.Add(game.sport + " - " + game.teamAName + " vs " + game.teamBName);
                     TrackedEvent trackedEvent = GetTrackedEventGivenTheGame(game);
                     
-                    //Run Analysis: 
+                    //Run Analysis
                     completedEvents.Add(trackedEvent);
-                    
+                    MoveDatabaseFile(trackedEvent.databaseName);
                     trackedEvent.processHandle.Kill();
                     currentTrackedEvents.Remove(trackedEvent);
                 }
                 counterLabel.Content = counter++; 
             }));
+        }
+
+        private void MoveDatabaseFile(string databaseName)
+        {
+            //MessageBox.Show("Input = " + databaseName);
+            databaseName = databaseName.Substring(1, databaseName.Length - 2); //To remove the Quote
+            databaseName += ".sqlite";
+            
+            string fileName = databaseName;
+            string sourcePath = @"C:\sports\" + databaseName.Substring(0, 10) + @"\";
+            string targetPath = filepathOfEndedEventsDatabaseFiles;
+
+            //if (System.IO.File.Exists(sourcePath+ fileName))
+            //{
+            //    //System.Media.SystemSounds.Asterisk.Play();
+            //    //MessageBox.Show("File "+ sourcePath + fileName + " exists");
+            //}else
+            //{
+            //    //System.Media.SystemSounds.Beep.Play();
+            //    //MessageBox.Show("File "+ sourcePath + fileName + "does not exist!");                
+            //}
+
+            // Use Path class to manipulate file and directory paths.
+            string sourceFile = System.IO.Path.Combine(sourcePath, fileName);
+            string destFile = System.IO.Path.Combine(targetPath, fileName);
+
+            // To copy a folder's contents to a new location:
+            // Create a new target folder, if necessary.
+            if (!System.IO.Directory.Exists(targetPath))
+            {
+                System.IO.Directory.CreateDirectory(targetPath);
+            }
+
+            // To copy a file to another location and 
+            // overwrite the destination file if it already exists.
+            System.IO.File.Copy(sourceFile, destFile, true);
+            System.IO.File.Delete(sourcePath);
         }
 
         private TrackedEvent GetTrackedEventGivenTheGame(Game game)

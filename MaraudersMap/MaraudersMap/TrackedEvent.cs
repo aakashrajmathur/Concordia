@@ -12,7 +12,7 @@ namespace MaraudersMap
         public Game game;
         public Process processHandle;
         DateTime startDateTime;
-        string databaseName; 
+        public string databaseName; 
 
         public TrackedEvent(Game game, Process process, string databaseName)
         {

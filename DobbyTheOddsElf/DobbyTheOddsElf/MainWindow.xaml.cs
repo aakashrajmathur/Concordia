@@ -14,7 +14,7 @@ namespace DobbyTheOddsElf
     /// </summary>
     public partial class MainWindow : Window
     {
-        const int TIMER_DURATION = 5000;
+        const int TIMER_DURATION = 15000;
         const int MINIMUM_LENGTH_OF_TEAM_NAME = 4;
 
         Timer timer;

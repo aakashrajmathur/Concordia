@@ -14,7 +14,7 @@ namespace MaraudersMap
     {
         const string filepathToDobby = @"C:\src\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\bin\Debug\DobbyTheOddsElf.exe";
         const string filepathOfEndedEventsDatabaseFiles = @"C:\Data\Ended\";
-        const int TIMER_DURATION = 12000;
+        const int TIMER_DURATION = 30000;//30seconds
         System.Timers.Timer timer;
 
         List<Game> currentLiveEvents;

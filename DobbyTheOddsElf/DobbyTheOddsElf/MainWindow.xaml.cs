@@ -200,7 +200,7 @@ namespace DobbyTheOddsElf
         public void CreateRow(string team, string rate)
         {
             sqlconn.Open();
-            string dateTime = DateTime.Now.ToString("d / M / yyyy HH:mm:ss");
+            string dateTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
             string insertCommand = @"INSERT INTO sportsLiveRates (DateTime, Team, Rate) VALUES ("" " + dateTime + @" "","" " + team + @" ""," + rate + ");";
             SQLiteCommand insertSQL = new SQLiteCommand(insertCommand, sqlconn);
             try

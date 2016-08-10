@@ -10,17 +10,12 @@
         <Grid.Background>
             <ImageBrush ImageSource="griphookTheGoblin.jpg" Stretch="UniformToFill"/>
         </Grid.Background>
-        <TextBox x:Name="textBox" Height="23" Margin="10,10,90,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top"/>
-        <Button x:Name="button" Content="Button" Margin="0,10,10,0" VerticalAlignment="Top" Height="23" Click="button_Click" HorizontalAlignment="Right" Width="75"/>
-        <ListBox x:Name="listBox" Margin="10,112,704,10"/>
-        <ListBox x:Name="listBox1" Margin="0,112,12,10" HorizontalAlignment="Right" Width="687"/>
-        <Label x:Name="labelFavorite" Content="Fav" Margin="13,43,90,0" VerticalAlignment="Top" Background="White">
-            <Label.BindingGroup>
-                <BindingGroup/>
-            </Label.BindingGroup>
-        </Label>
-        <Label x:Name="labelUnderDog" Content="UnderDog" Margin="13,69,12,0" VerticalAlignment="Top" Background="White"/>
-        <Button x:Name="button1" Content="Button" HorizontalAlignment="Left" Margin="1001,43,0,0" VerticalAlignment="Top" Width="75" Click="button1_Click"/>
+        <ListBox x:Name="listBoxResults" Margin="10,67,10,10" Opacity="0.7"/>
+        <Slider x:Name="sliderProfitPerc" Margin="10,10,139,0" VerticalAlignment="Top" Maximum="100" IsSnapToTickEnabled="True" ValueChanged="sliderProfitPerc_ValueChanged"/>
+        <Label x:Name="labelSliderValue" Content="Label" Margin="0,5,96,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="38" Foreground="White"/>
+        <Button x:Name="buttonRunAnalysis" Content="Run Analysis" Margin="0,8,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="75" Click="buttonRunAnalysis_Click"/>
+        <Label x:Name="labelInfo" Content="" Margin="10,33,10,0" VerticalAlignment="Top" Opacity="0.7" Background="White"/>
+
 
     </Grid>
 </Window>

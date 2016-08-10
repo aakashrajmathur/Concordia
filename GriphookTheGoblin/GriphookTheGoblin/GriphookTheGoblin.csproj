@@ -78,7 +78,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Compliance.cs" />
+    <Compile Include="DBComm.cs" />
+    <Compile Include="GameResult.cs" />
     <Compile Include="Record.cs" />
+    <Compile Include="ResultStatistics.cs" />
+    <Compile Include="TeamResult.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

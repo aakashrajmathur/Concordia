@@ -6,6 +6,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using System.Linq;
+using Awesomium.Core;
 
 namespace DobbyTheOddsElf
 {
@@ -219,7 +220,8 @@ namespace DobbyTheOddsElf
         {
             try
             {
-                mainWebBrowser.Navigate(link);//"https://sports.bovada.lv/live-betting/");
+                mainWebBrowser.Source = link.ToUri();
+                //mainWebBrowser.Navigate(link);//"https://sports.bovada.lv/live-betting/");
             }
             catch (Exception ex)
             {
@@ -270,8 +272,11 @@ namespace DobbyTheOddsElf
 
         private string readWebPageSource()
         {
-            mshtml.HTMLDocumentClass dom = (mshtml.HTMLDocumentClass)mainWebBrowser.Document;
-            return dom.body.innerHTML;
+            string html = mainWebBrowser.ExecuteJavascriptWithResult("document.getElementsByTagName('html')[0].innerHTML");
+            return html;
+
+            //mshtml.HTMLDocumentClass dom = (mshtml.HTMLDocumentClass)mainWebBrowser.Document;
+            //return dom.body.innerHTML;
         }
 
         private void monitorButton_Click(object sender, RoutedEventArgs e)

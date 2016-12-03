@@ -220,8 +220,8 @@ namespace DobbyTheOddsElf
         {
             try
             {
-                mainWebBrowser.Source = link.ToUri();
-                //mainWebBrowser.Navigate(link);//"https://sports.bovada.lv/live-betting/");
+                //mainWebBrowser.Source = link.ToUri();
+                mainWebBrowser.Navigate(link);//"https://sports.bovada.lv/live-betting/");
             }
             catch (Exception ex)
             {
@@ -272,11 +272,11 @@ namespace DobbyTheOddsElf
 
         private string readWebPageSource()
         {
-            string html = mainWebBrowser.ExecuteJavascriptWithResult("document.getElementsByTagName('html')[0].innerHTML");
-            return html;
+            //string html = mainWebBrowser.ExecuteJavascriptWithResult("document.getElementsByTagName('html')[0].innerHTML");
+            //return html;
 
-            //mshtml.HTMLDocumentClass dom = (mshtml.HTMLDocumentClass)mainWebBrowser.Document;
-            //return dom.body.innerHTML;
+            mshtml.HTMLDocumentClass dom = (mshtml.HTMLDocumentClass)mainWebBrowser.Document;
+            return dom.body.innerHTML;
         }
 
         private void monitorButton_Click(object sender, RoutedEventArgs e)

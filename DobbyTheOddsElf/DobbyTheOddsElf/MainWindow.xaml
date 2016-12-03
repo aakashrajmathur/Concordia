@@ -44,6 +44,6 @@
 
 
         <ListBox x:Name="listBoxQuerySubmitted" Margin="0,185,9,10" HorizontalAlignment="Right" Width="699" Background="#BFFFFFFF"/>
-        <awe:WebControl x:Name="mainWebBrowser" Margin="10,185,713,10"/>
+        <WebBrowser x:Name="mainWebBrowser" Margin="10,185,713,10"/>
     </Grid>
 </Window>

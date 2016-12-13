@@ -263,18 +263,17 @@ namespace MaraudersMap
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //mainPageWebBrowser.Navigate(new Uri("https://sports.bovada.lv/live-betting")); 
-            mainPageWebBrowser.Source = "https://sports.bovada.lv/live-betting".ToUri();
+            mainPageWebBrowser.Navigate(new Uri("https://sports.bovada.lv/live-betting")); 
+            //mainPageWebBrowser.Source = "https://sports.bovada.lv/live-betting".ToUri();
             timer.Start();
         }
 
         private string ReadWebPageSource()
         {
-
-            string html = mainPageWebBrowser.ExecuteJavascriptWithResult("document.getElementsByTagName('html')[0].innerHTML");
-            return html;
-            //mshtml.HTMLDocumentClass dom = (mshtml.HTMLDocumentClass)mainPageWebBrowser.Document;
-            //return dom.body.innerHTML;
+            //string html = mainPageWebBrowser.ExecuteJavascriptWithResult("document.getElementsByTagName('html')[0].innerHTML");
+            //return html;
+            mshtml.HTMLDocumentClass dom = (mshtml.HTMLDocumentClass)mainPageWebBrowser.Document;
+            return dom.body.innerHTML;
         }
 
         private Dictionary<int, string> GetLinksEmbeddedWithIndex(string webPageSource)

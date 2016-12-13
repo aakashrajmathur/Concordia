@@ -21,6 +21,6 @@
             <ListBox Grid.Column="1" x:Name="listBoxFinishedEvents" Width="auto" Opacity="0.75" Margin="5,10,0,10"/>
         </Grid>
         <Label x:Name="counterLabel" Content="" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="87" HorizontalContentAlignment="Right"/>
-        <awe:WebControl x:Name="mainPageWebBrowser" Height="160" Margin="10" VerticalAlignment="Bottom"/>
+        <WebBrowser x:Name="mainPageWebBrowser" Height="160" Margin="10" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>

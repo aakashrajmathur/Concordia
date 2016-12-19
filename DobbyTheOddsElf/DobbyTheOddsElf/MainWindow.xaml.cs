@@ -17,6 +17,7 @@ namespace DobbyTheOddsElf
     public partial class MainWindow : Window
     {
         const int TIMER_DURATION = 1000;    //1second
+        const int TIMER_DURATION_GAME_LOG = 300000; //5 minutes
         const int MINIMUM_LENGTH_OF_TEAM_NAME = 4;
 
         string teamName1 = "";
@@ -24,8 +25,12 @@ namespace DobbyTheOddsElf
         string teamName2 = "";
         string currentOddsTeam2 = "";
         List<OddsRecord> oddsRecords;
+        List<string> gameLog;
+
         Timer timer;
         Timer timerReadTeamNames;
+        Timer timerReadGameLog;
+
         SQLiteConnection sqlconn;
         public static string databaseName;
 
@@ -41,7 +46,12 @@ namespace DobbyTheOddsElf
                 timer = new Timer(TIMER_DURATION);
                 timer.Elapsed += new ElapsedEventHandler(timerElapsed);
 
+                timerReadGameLog = new Timer(TIMER_DURATION_GAME_LOG);
+                timer.Elapsed += new ElapsedEventHandler(timerElapsedReadGameLog);
+
+
                 oddsRecords = new List<OddsRecord>();
+                gameLog = new List<string>();
 
                 string[] args = Environment.GetCommandLineArgs();
                 if (args.Count() == 1)
@@ -64,7 +74,7 @@ namespace DobbyTheOddsElf
             catch (Exception ex) {
                 MessageBox.Show("Error in Main init, Message = " + ex.Message);
             }
-        }
+        }       
 
         private void GetTeamNames(object sender, ElapsedEventArgs e)
         {
@@ -449,13 +459,28 @@ namespace DobbyTheOddsElf
             }
         }
 
+        private void timerElapsedReadGameLog(object sender, ElapsedEventArgs e)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                IHTMLElement scoreboardHTMLDoc = ((HTMLDocument)mainWebBrowser.Document).getElementById("scoreboard");
+                if (scoreboardHTMLDoc.innerHTML != null)
+                {                    
+                    if (scoreboardHTMLDoc != null)
+                    {
+                        gameLog = GetProcessedWebSource(scoreboardHTMLDoc.innerHTML);                        
+                    }
+                }
+            }));
+        }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             sqlconn = new SQLiteConnection("Data Source=" + GetDatabaseLocation() + GetDatabaseName() + ".sqlite;Version=3;New=True;Compress=True;");
             sqlconn.Open();
             SQLiteCommand createQ = new SQLiteCommand("CREATE TABLE IF NOT EXISTS sportsLiveRates( DateTime TEXT, Team TEXT, Rate TEXT)", sqlconn);
             createQ.ExecuteNonQuery();
-            
+
             foreach (OddsRecord oddsRecord in oddsRecords)
             {
                 string dateTime = oddsRecord.dateTime.ToString("yyyy/MM/dd HH:mm:ss");
@@ -472,7 +497,15 @@ namespace DobbyTheOddsElf
                 }
             }
             sqlconn.Close();
+
+            //Write game log to text file.
+            using (StreamWriter writer = new StreamWriter(GetDatabaseLocation() + GetDatabaseName() + ".txt"))
+            {
+                foreach (string str in gameLog)
+                {
+                    writer.WriteLine(str);
+                }
+            }
         }
-        
     }
 }

@@ -468,13 +468,22 @@ namespace DobbyTheOddsElf
                 {                    
                     if (scoreboardHTMLDoc != null)
                     {
-                        gameLog = GetProcessedWebSource(scoreboardHTMLDoc.innerHTML);                        
+                        gameLog = GetProcessedWebSource(scoreboardHTMLDoc.innerHTML); 
+                        
+                        if(gameLog.Count >= 3)
+                        {
+                            if(gameLog[1].TrimStart().TrimEnd().ToUpper().CompareTo("FINAL") == 0)
+                            {
+                                WriteLogsAndTerminate();
+                                this.Close();
+                            }
+                        }                      
                     }
                 }
             }));
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void WriteLogsAndTerminate()
         {
             sqlconn = new SQLiteConnection("Data Source=" + GetDatabaseLocation() + GetDatabaseName() + ".sqlite;Version=3;New=True;Compress=True;");
             sqlconn.Open();

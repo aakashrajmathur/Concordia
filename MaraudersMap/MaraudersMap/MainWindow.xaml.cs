@@ -76,9 +76,10 @@ namespace MaraudersMap
                                     @" """ + game.teamBName + @"""" + 
                                     @" """ + game.linkToLiveWebPage.ToString() + 
                                     @"""" + @" """ + databaseName + @"""",
-                        FileName = filepathToDobby
+                        FileName = filepathToDobby                        
                     };
                     Process process = Process.Start(startInfo);
+                    process.WaitForInputIdle();
                     TrackedEvent trackedEvent = new TrackedEvent(game, process, databaseName);
                     currentTrackedEvents.Add(trackedEvent);               
                 }
@@ -90,7 +91,7 @@ namespace MaraudersMap
                     MoveDatabaseFile(trackedEvent.databaseName);
                     //Run Analysis
                     completedEvents.Add(trackedEvent);                    
-                    trackedEvent.processHandle.CloseMainWindow();
+                    //trackedEvent.processHandle.CloseMainWindow();
                     currentTrackedEvents.Remove(trackedEvent);
                 }
                 counterLabel.Content = counter++; 

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DobbyTheOddsElf"
         xmlns:awe="http://schemas.awesomium.com/winfx" x:Class="DobbyTheOddsElf.MainWindow"
         mc:Ignorable="d"
-        Title="Dobby - The Odds Elf!" Height="550" Width="850" Icon="dobbyTheElfIcon.ico">
+        Title="Dobby - The Odds Elf!" Height="550" Width="850" Icon="dobbyTheElfIcon.ico" Closing="Window_Closing">
     <Window.Background>
         <ImageBrush ImageSource="circuit-spa-francorchamps.jpg" Stretch="UniformToFill"/>
     </Window.Background>
@@ -44,6 +44,6 @@
 
 
         <ListBox x:Name="listBoxQuerySubmitted" Margin="0,185,9,10" HorizontalAlignment="Right" Width="699" Background="#BFFFFFFF"/>
-        <WebBrowser x:Name="mainWebBrowser" Margin="10,185,713,10"/>
+        <WebBrowser x:Name="mainWebBrowser" Margin="10,185,713,10" />
     </Grid>
 </Window>

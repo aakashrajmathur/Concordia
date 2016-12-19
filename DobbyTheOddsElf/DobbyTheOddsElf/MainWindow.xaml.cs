@@ -35,7 +35,7 @@ namespace DobbyTheOddsElf
             {
                 InitializeComponent();
 
-                timerReadTeamNames = new Timer(1000);
+                timerReadTeamNames = new Timer(5000);
                 timerReadTeamNames.Elapsed += new ElapsedEventHandler(GetTeamNames);
 
                 timer = new Timer(TIMER_DURATION);
@@ -62,7 +62,7 @@ namespace DobbyTheOddsElf
 
             }
             catch (Exception ex) {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Error in Main init, Message = " + ex.Message);
             }
         }
 
@@ -72,7 +72,9 @@ namespace DobbyTheOddsElf
             {
                 Dispatcher.Invoke(new Action(() =>
                 {
+                    //MessageBox.Show("1");
                     IHTMLElement couponHTMLElement = ((HTMLDocument)mainWebBrowser.Document).getElementById("coupon");
+                    //MessageBox.Show("2");
                     if (couponHTMLElement != null)
                     {
                         string header = GetHeaderInCoupon(couponHTMLElement.innerHTML);
@@ -81,8 +83,14 @@ namespace DobbyTheOddsElf
 
                         if (teamsTokens.Length == 2)
                         {
-                            teamName1 = GetClensedString(teamsTokens[0]);
-                            teamName2 = GetClensedString(teamsTokens[1]);
+                            teamName1 = teamsTokens[0].Replace("&nbsp;", "").TrimStart().TrimEnd();
+                            textBoxTeam1.Text = teamName1;
+                            
+                            teamName2 = teamsTokens[1].Replace("&nbsp;", "").TrimStart().TrimEnd();
+                            textBoxTeam2.Text = teamName2;
+                            listBoxQuerySubmitted.Items.Add("team names read succesfully!");
+                            listBoxQuerySubmitted.Items.Add(teamName1);
+                            listBoxQuerySubmitted.Items.Add(teamName2);
                             timer.Start();
                             timerReadTeamNames.Stop();
                         }
@@ -92,7 +100,7 @@ namespace DobbyTheOddsElf
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Error in Get Team Name, Message = " + ex.Message);
             }
         }
 

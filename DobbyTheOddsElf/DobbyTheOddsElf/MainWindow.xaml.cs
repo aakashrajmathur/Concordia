@@ -224,7 +224,7 @@ namespace DobbyTheOddsElf
 
                         for(int i = 0; i < processedWebSource.Count; i++)
                         {
-                            if(processedWebSource[i].TrimStart().TrimEnd().ToUpper().CompareTo(teamName.TrimStart().TrimEnd().ToUpper()) == 0)
+                            if(processedWebSource[i].Replace("&nbsp;", "").TrimStart().TrimEnd().ToUpper().CompareTo(teamName.Replace("&nbsp;", "").TrimStart().TrimEnd().ToUpper()) == 0)
                             {
                                 if(processedWebSource.Count >= i + 1)
                                 {
@@ -424,7 +424,7 @@ namespace DobbyTheOddsElf
 
         private string GetClensedString(string input, string replacementText = "")
         {
-            return System.Text.RegularExpressions.Regex.Replace(input.TrimStart().TrimEnd(), @"[^0-9a-zA-Z\-]+", replacementText);
+            return System.Text.RegularExpressions.Regex.Replace(input.Replace("&nbsp;", "").TrimStart().TrimEnd(), @"[^0-9a-zA-Z\-]+", replacementText);
         }
 
         private void monitorButton_Click(object sender, RoutedEventArgs e)
@@ -442,9 +442,9 @@ namespace DobbyTheOddsElf
 
                     if (teamsTokens.Length == 2)
                     {
-                        teamName1 = teamsTokens[0].TrimStart().TrimEnd();
+                        teamName1 = teamsTokens[0].Replace("&nbsp;", "").TrimStart().TrimEnd();
                         textBoxTeam1.Text = teamName1;
-                        teamName2 = teamsTokens[1].TrimStart().TrimEnd();
+                        teamName2 = teamsTokens[1].Replace("&nbsp;", "").TrimStart().TrimEnd();
                         textBoxTeam2.Text = teamName2;
                         timer.Start();
                         timerReadTeamNames.Stop();

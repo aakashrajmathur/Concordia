@@ -15,8 +15,8 @@ namespace MaraudersMap
     {
         const string filepathToDobby = @"C:\src\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\bin\Debug\DobbyTheOddsElf.exe";
         const string filepathOfEndedEventsDatabaseFiles = @"C:\Data\Ended\";
-        const int TIMER_DURATION = 30000;//30seconds
-        System.Timers.Timer timer;
+        const int TIMER_DURATION = 60000;   //60seconds
+        Timer timer;
 
         List<Game> currentLiveEvents;
         List<TrackedEvent> currentTrackedEvents;
@@ -39,9 +39,6 @@ namespace MaraudersMap
 
         private void TimerElapsed(object sender, ElapsedEventArgs e)
         {
-            //MessageBox.Show(currentLiveEvents.Count + " original games");
-            //timer.Stop();
-
             Dispatcher.Invoke(new Action(() =>
             {
                 //TODO: scrap the webpage for current live events, compare with existing -> create list of new events, list of ended events, foreach new event -> create a dobby, foreach eneded event -> do analysis & add to records.
@@ -93,7 +90,7 @@ namespace MaraudersMap
                     MoveDatabaseFile(trackedEvent.databaseName);
                     //Run Analysis
                     completedEvents.Add(trackedEvent);                    
-                    trackedEvent.processHandle.Kill();
+                    trackedEvent.processHandle.CloseMainWindow();
                     currentTrackedEvents.Remove(trackedEvent);
                 }
                 counterLabel.Content = counter++; 

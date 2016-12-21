@@ -4,9 +4,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Timers;
 using System.Windows;
-using System.Windows.Input;
 using System.Linq;
-using Awesomium.Core;
 using mshtml;
 
 namespace DobbyTheOddsElf
@@ -32,7 +30,10 @@ namespace DobbyTheOddsElf
         Timer timerReadGameLog;
 
         SQLiteConnection sqlconn;
-        public static string databaseName;
+        public static string sport = "";
+        public static string databaseName = "";
+
+        bool isGameOver = false;
 
         public MainWindow()
         {
@@ -60,21 +61,20 @@ namespace DobbyTheOddsElf
                 }
                 else
                 {
-                    NavigateMainWebBrowser(args[3]);
+                    //arguments expected: 0-ProgramName, 1-URL, 2-Sport
+                    NavigateMainWebBrowser(args[1]);
 
                     timerReadTeamNames.Start();
 
-                    databaseName = args[4];
-                    WindowState = WindowState.Minimized; //Default Window state Minimized                    
-                    //timer.Start();
-                }
-                //CreateSQLiteDatabase();
-
+                    sport = args[2];
+                    WindowState = WindowState.Minimized; //Default Window state Minimized                  
+                }             
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Error in Main init, Message = " + ex.Message);
             }
-        }       
+        }
 
         private void GetTeamNames(object sender, ElapsedEventArgs e)
         {
@@ -95,7 +95,7 @@ namespace DobbyTheOddsElf
                         {
                             teamName1 = teamsTokens[0].Replace("&nbsp;", "").TrimStart().TrimEnd();
                             textBoxTeam1.Text = teamName1;
-                            
+
                             teamName2 = teamsTokens[1].Replace("&nbsp;", "").TrimStart().TrimEnd();
                             textBoxTeam2.Text = teamName2;
                             listBoxQuerySubmitted.Items.Add("team names read succesfully!");
@@ -152,7 +152,7 @@ namespace DobbyTheOddsElf
 
         private string GetDatabaseLocation()
         {
-            string databaseLocation = "c:\\Data\\" + DateTime.Now.ToString("yyyy_MM_dd") +"\\";
+            string databaseLocation = "c:\\Data\\" + DateTime.Now.ToString("yyyy_MM_dd") + "\\";
             if (!Directory.Exists(databaseLocation))
             {
                 Directory.CreateDirectory(databaseLocation);
@@ -163,8 +163,8 @@ namespace DobbyTheOddsElf
         private string GetDatabaseName()
         {
             //Objective: Give Database a unique name, Convention: date time + processID: 
-            if (databaseName == null)
-                return DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_") + teamName1 + "_vs_" + teamName2;
+            if (databaseName.Length == 0) 
+                return DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_") + "_" + sport + "_" + teamName1 + "_vs_" + teamName2;
             else
                 return databaseName;
         }
@@ -175,20 +175,27 @@ namespace DobbyTheOddsElf
             {
                 Dispatcher.Invoke(new Action(() =>
                 {
-                    string updatedOdds = GetClensedString(GetOdds(teamName1));
-                    if (currentOddsTeam1.CompareTo(updatedOdds) != 0)
+                    if (!isGameOver)
                     {
-                        listBoxQuerySubmitted.Items.Add("Odds updated for " + teamName1 + " to " + updatedOdds + " from " + currentOddsTeam1);
-                        currentOddsTeam1 = updatedOdds;
-                        oddsRecords.Add(new OddsRecord(teamName1, updatedOdds));
-                    }
+                        string updatedOdds = GetClensedString(GetOdds(teamName1));
+                        if (currentOddsTeam1.CompareTo(updatedOdds) != 0)
+                        {
+                            listBoxQuerySubmitted.Items.Add("Odds updated for " + teamName1 + " to " + updatedOdds + " from " + currentOddsTeam1);
+                            currentOddsTeam1 = updatedOdds;
+                            oddsRecords.Add(new OddsRecord(teamName1, updatedOdds));
+                        }
 
-                    updatedOdds = GetClensedString(GetOdds(teamName2));
-                    if (currentOddsTeam2.CompareTo(updatedOdds) != 0)
+                        updatedOdds = GetClensedString(GetOdds(teamName2));
+                        if (currentOddsTeam2.CompareTo(updatedOdds) != 0)
+                        {
+                            listBoxQuerySubmitted.Items.Add("Odds updated for " + teamName2 + " to " + updatedOdds + " from " + currentOddsTeam2);
+                            currentOddsTeam2 = updatedOdds;
+                            oddsRecords.Add(new OddsRecord(teamName2, updatedOdds));
+                        }
+                    }
+                    else
                     {
-                        listBoxQuerySubmitted.Items.Add("Odds updated for " + teamName2 + " to " + updatedOdds + " from " + currentOddsTeam2);
-                        currentOddsTeam2 = updatedOdds;
-                        oddsRecords.Add(new OddsRecord(teamName2, updatedOdds));
+                        listBoxQuerySubmitted.Items.Add("Game over");
                     }
                 }));
             }
@@ -205,28 +212,28 @@ namespace DobbyTheOddsElf
             {
                 listBoxQuerySubmitted.Items.Add("Odds updated for " + teamName + " to " + updatedOdds + " from " + currentOdds);
                 currentOdds = updatedOdds;
-                oddsRecords.Add(new OddsRecord(teamName, updatedOdds));                
+                oddsRecords.Add(new OddsRecord(teamName, updatedOdds));
             }
         }
 
         private string GetOdds(string teamName)
         {
-            
+
             IHTMLElementCollection liCollection = ((HTMLDocument)(mainWebBrowser.Document)).getElementsByTagName("li");
             foreach (IHTMLElement elem in liCollection)
             {
                 if (elem.innerHTML != null)
                 {
-                    if (elem.innerHTML.ToUpper().Contains("MONEYLINE"))
+                    if ((elem.innerHTML.ToUpper().Contains("MONEYLINE"))|| (elem.innerHTML.ToUpper().Contains("MATCH WINNER")))
                     {
                         List<string> processedWebSource = GetProcessedWebSource(elem.innerHTML);
-                        
 
-                        for(int i = 0; i < processedWebSource.Count; i++)
+
+                        for (int i = 0; i < processedWebSource.Count; i++)
                         {
-                            if(processedWebSource[i].Replace("&nbsp;", "").TrimStart().TrimEnd().ToUpper().CompareTo(teamName.Replace("&nbsp;", "").TrimStart().TrimEnd().ToUpper()) == 0)
+                            if (processedWebSource[i].Replace("&nbsp;", "").TrimStart().TrimEnd().ToUpper().CompareTo(teamName.Replace("&nbsp;", "").TrimStart().TrimEnd().ToUpper()) == 0)
                             {
-                                if(processedWebSource.Count >= i + 1)
+                                if (processedWebSource.Count >= i + 1)
                                 {
                                     return processedWebSource[i + 1];
                                 }
@@ -240,7 +247,7 @@ namespace DobbyTheOddsElf
         }
 
         private void ReportRates()
-        {  
+        {
             List<string> processedWebSource = GetProcessedWebSource(readWebPageSource());
 
             if (processedWebSource.Contains("Moneyline", StringComparer.OrdinalIgnoreCase) || processedWebSource.Contains("Match winner", StringComparer.OrdinalIgnoreCase))
@@ -250,10 +257,10 @@ namespace DobbyTheOddsElf
                 string teamB = GetTeamName(textBoxTeam2.Text, processedWebSource);
 
                 int index = processedWebSource.FindIndex(new Predicate<string>(item => item.ToUpper() == currentMetric.ToUpper()));
-                if( Validate(processedWebSource[index+1], processedWebSource[index+2], teamA, teamB))
+                if (Validate(processedWebSource[index + 1], processedWebSource[index + 2], teamA, teamB))
                 {
                     CreateRow(processedWebSource[index + 1], GetRate(processedWebSource[index + 2]));
-                }                
+                }
                 if (Validate(processedWebSource[index + 3], processedWebSource[index + 4], teamA, teamB))
                 {
                     CreateRow(processedWebSource[index + 3], GetRate(processedWebSource[index + 4]));
@@ -269,7 +276,7 @@ namespace DobbyTheOddsElf
             teamName = GetFullDisplayName(teamName, processedWebSource);
             return teamName;
         }
-        
+
         private string GetFullDisplayName(string input, List<string> processedWebSource)
         {
             string[] tokens = input.Split(' ');
@@ -305,7 +312,7 @@ namespace DobbyTheOddsElf
                         string[] delimiter = new string[] { "vs", "@" };
                         string[] tokens = s.Split(delimiter, StringSplitOptions.None);
 
-                        foreach(string token in tokens)
+                        foreach (string token in tokens)
                         {
                             if (token.IndexOf(input, StringComparison.OrdinalIgnoreCase) >= 0)
                                 return token;
@@ -318,7 +325,7 @@ namespace DobbyTheOddsElf
 
         private bool Validate(string webInputTeamName, string webInputRate, string userTeamNameA, string userTeamNameB)
         {
-            if ((webInputTeamName.ToUpper().CompareTo(userTeamNameA.ToUpper()) != 0) && 
+            if ((webInputTeamName.ToUpper().CompareTo(userTeamNameA.ToUpper()) != 0) &&
                 (webInputTeamName.ToUpper().CompareTo(userTeamNameB.ToUpper()) != 0))
                 return false;
 
@@ -337,10 +344,10 @@ namespace DobbyTheOddsElf
             {
                 rate = "100";
             }
-            
+
             return rate;
         }
-       
+
         public void CreateRow(string team, string rate)
         {
             sqlconn.Open();
@@ -350,7 +357,7 @@ namespace DobbyTheOddsElf
             try
             {
                 insertSQL.ExecuteNonQuery();
-                listBoxQuerySubmitted.Items.Add(insertSQL.CommandText.ToString());                
+                listBoxQuerySubmitted.Items.Add(insertSQL.CommandText.ToString());
             }
             catch (Exception ex)
             {
@@ -358,7 +365,7 @@ namespace DobbyTheOddsElf
             }
             sqlconn.Close();
         }
-        
+
         private void NavigateMainWebBrowser(string link)
         {
             try
@@ -370,7 +377,7 @@ namespace DobbyTheOddsElf
             {
                 MessageBox.Show("Error in navigating URL " + Environment.NewLine + "Details: " + ex.Message);
             }
-        }        
+        }
 
         private List<string> GetProcessedWebSource(string webPageSource)
         {
@@ -382,7 +389,7 @@ namespace DobbyTheOddsElf
             string tempBuffer = "";
             foreach (char c in webPageSource.ToCharArray())
             {
-                if(c == '<')
+                if (c == '<')
                 {
                     tempBuffer = tempBuffer.TrimStart();
                     tempBuffer = tempBuffer.TrimEnd();
@@ -392,7 +399,8 @@ namespace DobbyTheOddsElf
                         tempBuffer = "";
                     }
                     isInTag = true;
-                }else if (c == '>')
+                }
+                else if (c == '>')
                 {
                     isInTag = false;
                     continue;
@@ -406,10 +414,11 @@ namespace DobbyTheOddsElf
 
             tempBuffer = tempBuffer.TrimStart();
             tempBuffer = tempBuffer.TrimEnd();
-            if (tempBuffer.Length > 0) {
+            if (tempBuffer.Length > 0)
+            {
                 processedWebSource.Add(tempBuffer);
             }
-            
+
             return processedWebSource;
         }
 
@@ -429,10 +438,8 @@ namespace DobbyTheOddsElf
 
         private void monitorButton_Click(object sender, RoutedEventArgs e)
         {
-            if(monitorButton.Content.ToString() == "Start")
+            if (monitorButton.Content.ToString() == "Start")
             {
-                //timer.Start();
-
                 IHTMLElement couponHTMLElement = ((HTMLDocument)mainWebBrowser.Document).getElementById("coupon");
                 if (couponHTMLElement != null)
                 {
@@ -452,7 +459,8 @@ namespace DobbyTheOddsElf
                 }
 
                 monitorButton.Content = "Stop";
-            }else
+            }
+            else
             {
                 timer.Stop();
                 monitorButton.Content = "Start";
@@ -463,27 +471,31 @@ namespace DobbyTheOddsElf
         {
             Dispatcher.Invoke(new Action(() =>
             {
-                IHTMLElement scoreboardHTMLDoc = ((HTMLDocument)mainWebBrowser.Document).getElementById("scoreboard");
-                if (scoreboardHTMLDoc.innerHTML != null)
-                {                    
-                    if (scoreboardHTMLDoc != null)
+                if (!isGameOver)
+                {
+                    IHTMLElement scoreboardHTMLDoc = ((HTMLDocument)mainWebBrowser.Document).getElementById("scoreboard");
+                    if (scoreboardHTMLDoc.innerHTML != null)
                     {
-                        gameLog = GetProcessedWebSource(scoreboardHTMLDoc.innerHTML); 
-                        
-                        if(gameLog.Count >= 3)
+                        if (scoreboardHTMLDoc != null)
                         {
-                            if(gameLog[1].TrimStart().TrimEnd().ToUpper().CompareTo("FINAL") == 0)
+                            gameLog = GetProcessedWebSource(scoreboardHTMLDoc.innerHTML);
+                            if (gameLog.Count > 3)
                             {
-                                WriteLogsAndTerminate();
-                                this.Close();
+                                if (gameLog[1].TrimStart().TrimEnd().ToUpper().CompareTo("FINAL") == 0)
+                                {
+                                    isGameOver = true;
+                                    timerReadGameLog.Stop();
+                                    //WriteLogs();
+                                    this.Close();
+                                }
                             }
-                        }                      
+                        }
                     }
                 }
             }));
         }
 
-        private void WriteLogsAndTerminate()
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             sqlconn = new SQLiteConnection("Data Source=" + GetDatabaseLocation() + GetDatabaseName() + ".sqlite;Version=3;New=True;Compress=True;");
             sqlconn.Open();

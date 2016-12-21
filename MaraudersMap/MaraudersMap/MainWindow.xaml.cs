@@ -1,5 +1,4 @@
-﻿using Awesomium.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace MaraudersMap
     public partial class MainWindow : Window
     {
         const string filepathToDobby = @"C:\src\Concordia\DobbyTheOddsElf\DobbyTheOddsElf\bin\Debug\DobbyTheOddsElf.exe";
-        const string filepathOfEndedEventsDatabaseFiles = @"C:\Data\Ended\";
+        //const string filepathOfEndedEventsDatabaseFiles = @"C:\Data\Ended\";
         const int TIMER_DURATION = 60000;   //60seconds
         Timer timer;
 
@@ -68,19 +67,18 @@ namespace MaraudersMap
 
                 foreach (Game game in newGames)
                 {
-                    string databaseName = GetDatabaseName(game);
+                    //string databaseName = GetDatabaseName(game);
                     //Start Dobby:
                     ProcessStartInfo startInfo = new ProcessStartInfo
                     {
-                        Arguments = @"""" + game.teamAName + @"""" + 
-                                    @" """ + game.teamBName + @"""" + 
+                        Arguments = //@"""" + game.teamAName + @"""" + 
+                                    //@" """ + game.teamBName + @"""" + 
                                     @" """ + game.linkToLiveWebPage.ToString() + 
-                                    @"""" + @" """ + databaseName + @"""",
-                        FileName = filepathToDobby                        
+                                    @"""" + @" """ + game.sport + @"""",
+                        FileName = filepathToDobby
                     };
                     Process process = Process.Start(startInfo);
-                    process.WaitForInputIdle();
-                    TrackedEvent trackedEvent = new TrackedEvent(game, process, databaseName);
+                    TrackedEvent trackedEvent = new TrackedEvent(game, process);//, databaseName);
                     currentTrackedEvents.Add(trackedEvent);               
                 }
                 foreach(Game game in endedGames)
@@ -88,7 +86,7 @@ namespace MaraudersMap
                     TrackedEvent trackedEvent = GetTrackedEventGivenTheGame(game);
 
                     listBoxFinishedEvents.Items.Add(game.sport + " - " + game.teamAName + " vs " + game.teamBName + " started at "+ trackedEvent.startDateTime + ", ended at " + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss"));
-                    MoveDatabaseFile(trackedEvent.databaseName);
+                    //MoveDatabaseFile(trackedEvent.databaseName);
                     //Run Analysis
                     completedEvents.Add(trackedEvent);                    
                     //trackedEvent.processHandle.CloseMainWindow();
@@ -98,44 +96,44 @@ namespace MaraudersMap
             }));
         }
 
-        private void MoveDatabaseFile(string databaseName)
-        {
-            //MessageBox.Show("Input = " + databaseName);
-            databaseName = databaseName.Substring(1, databaseName.Length - 2); //To remove the Quote
-            databaseName += ".sqlite";
+        //private void MoveDatabaseFile(string databaseName)
+        //{
+        //    //MessageBox.Show("Input = " + databaseName);
+        //    databaseName = databaseName.Substring(1, databaseName.Length - 2); //To remove the Quote
+        //    databaseName += ".sqlite";
             
-            string fileName = databaseName;
-            string sourcePath = @"C:\Data\" + databaseName.Substring(0, 10) + @"\";
-            string targetPath = filepathOfEndedEventsDatabaseFiles;
-            if (!System.IO.Directory.Exists(filepathOfEndedEventsDatabaseFiles))
-            {
-                System.IO.Directory.CreateDirectory(filepathOfEndedEventsDatabaseFiles);
-            }
+        //    string fileName = databaseName;
+        //    string sourcePath = @"C:\Data\" + databaseName.Substring(0, 10) + @"\";
+        //    string targetPath = filepathOfEndedEventsDatabaseFiles;
+        //    if (!System.IO.Directory.Exists(filepathOfEndedEventsDatabaseFiles))
+        //    {
+        //        System.IO.Directory.CreateDirectory(filepathOfEndedEventsDatabaseFiles);
+        //    }
 
-            //if (System.IO.File.Exists(sourcePath+ fileName))
-            //{
-            //    //System.Media.SystemSounds.Asterisk.Play();
-            //    //MessageBox.Show("File "+ sourcePath + fileName + " exists");
-            //}else
-            //{
-            //    //System.Media.SystemSounds.Beep.Play();
-            //    //MessageBox.Show("File "+ sourcePath + fileName + "does not exist!");                
-            //}
+        //    //if (System.IO.File.Exists(sourcePath+ fileName))
+        //    //{
+        //    //    //System.Media.SystemSounds.Asterisk.Play();
+        //    //    //MessageBox.Show("File "+ sourcePath + fileName + " exists");
+        //    //}else
+        //    //{
+        //    //    //System.Media.SystemSounds.Beep.Play();
+        //    //    //MessageBox.Show("File "+ sourcePath + fileName + "does not exist!");                
+        //    //}
 
-            // Use Path class to manipulate file and directory paths.
-            string sourceFile = System.IO.Path.Combine(sourcePath, fileName);
-            string destFile = System.IO.Path.Combine(targetPath, fileName);
+        //    // Use Path class to manipulate file and directory paths.
+        //    string sourceFile = System.IO.Path.Combine(sourcePath, fileName);
+        //    string destFile = System.IO.Path.Combine(targetPath, fileName);
 
-            // To copy a folder's contents to a new location:
-            // Create a new target folder, if necessary.
-            if (!System.IO.Directory.Exists(targetPath))
-            {
-                System.IO.Directory.CreateDirectory(targetPath);
-            }
+        //    // To copy a folder's contents to a new location:
+        //    // Create a new target folder, if necessary.
+        //    if (!System.IO.Directory.Exists(targetPath))
+        //    {
+        //        System.IO.Directory.CreateDirectory(targetPath);
+        //    }
 
-            // To move a file or folder to a new location:
-            System.IO.File.Move(sourceFile, destFile);
-        }
+        //    // To move a file or folder to a new location:
+        //    System.IO.File.Move(sourceFile, destFile);
+        //}
 
         private TrackedEvent GetTrackedEventGivenTheGame(Game game)
         {
@@ -159,14 +157,14 @@ namespace MaraudersMap
             return @"""" + input + @"""";
         }
 
-        private string GetDatabaseName(Game game)
-        {
-            string databaseName = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_");
+        //private string GetDatabaseName(Game game)
+        //{
+        //    string databaseName = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_");
 
-            databaseName += GetClensedString(game.sport) + "_" + GetClensedString(game.teamAName) + "_vs_" + GetClensedString(game.teamBName);
-            databaseName = databaseName.Replace(" ", "");
-            return GetQuotedString(databaseName);
-        }
+        //    databaseName += GetClensedString(game.sport) + "_" + GetClensedString(game.teamAName) + "_vs_" + GetClensedString(game.teamBName);
+        //    databaseName = databaseName.Replace(" ", "");
+        //    return GetQuotedString(databaseName);
+        //}
 
         private List<Game> GetNewGames(List<Game> newList, List<Game> existingList)
         {

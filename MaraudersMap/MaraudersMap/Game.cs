@@ -24,8 +24,7 @@ namespace MaraudersMap
 
         public int CompareTo(Game other)
         {
-            if ((this.teamAName.CompareTo(other.teamAName) == 0) && 
-                (this.teamBName.CompareTo(other.teamBName) == 0) && 
+            if ((this.linkToLiveWebPage.ToString().CompareTo(other.linkToLiveWebPage.ToString()) == 0) &&
                 (this.sport.CompareTo(other.sport) == 0))
             {
                 return 0;
@@ -37,8 +36,7 @@ namespace MaraudersMap
 
         public bool Equals(Game other)
         {
-            return ((this.teamAName.CompareTo(other.teamAName) == 0) && 
-                    (this.teamBName.CompareTo(other.teamBName) == 0) && 
+            return ((this.linkToLiveWebPage.ToString().CompareTo(other.linkToLiveWebPage.ToString()) == 0) && 
                     (this.sport.CompareTo(other.sport) == 0));
         }
     }

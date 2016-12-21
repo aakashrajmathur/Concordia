@@ -12,14 +12,14 @@ namespace MaraudersMap
         public Game game;
         public Process processHandle;
         public DateTime startDateTime;
-        public string databaseName; 
+        //public string databaseName; 
 
-        public TrackedEvent(Game game, Process process, string databaseName)
+        public TrackedEvent(Game game, Process process)//, string databaseName)
         {
             this.game = game;
             this.processHandle = process;
             this.startDateTime = DateTime.Now;
-            this.databaseName = databaseName; 
+            //this.databaseName = databaseName; 
         }
     }
 }

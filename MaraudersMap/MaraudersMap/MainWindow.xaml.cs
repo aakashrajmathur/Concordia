@@ -214,6 +214,11 @@ namespace MaraudersMap
             webPageSource = webPageSource.Replace("\n", "");
 
             int startingIndex = webPageSource.IndexOf("Live Now") - 1;
+
+            //if the web page goes down, then shut down all existing events. This happens when bovada conducts maintainance.
+            if (startingIndex < 0)
+                return null;
+
             int endingIndex = webPageSource.IndexOf("Upcoming") + 9;
 
             webPageSource = webPageSource.Substring(startingIndex, (endingIndex - startingIndex));

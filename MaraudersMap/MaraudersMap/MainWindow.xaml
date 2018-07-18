@@ -23,6 +23,5 @@
             <ListBox Grid.Column="2" x:Name="listBoxFinishedEvents" Opacity="0.75" Margin="10"/>
         </Grid>
         <Label x:Name="counterLabel" Content="" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="87" HorizontalContentAlignment="Right"/>
-        
     </Grid>
 </Window>

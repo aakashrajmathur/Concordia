@@ -18,6 +18,7 @@ namespace MaraudersMap
         Timer timer;
 
         List<Game> currentLiveEvents;
+        List<Game> toBeIgnored;
         List<TrackedEvent> currentTrackedEvents;
         List<TrackedEvent> completedEvents;
         HashSet<string> sportsCategories;
@@ -43,54 +44,64 @@ namespace MaraudersMap
                 //TODO: scrap the webpage for current live events, compare with existing -> create list of new events, list of ended events, foreach new event -> create a dobby, foreach eneded event -> do analysis & add to records.
                 List<Game> updatedLiveEvents = GetLiveEvents();
 
-                ////For Testing: 
-                //if (counter == 3)
-                //{
-                //    updatedLiveEvents.Clear();
-                //}
-                ////end Testing
-
-                //MessageBox.Show(updatedLiveEvents.Count + " updated games");
-                listBoxLiveEvents.Items.Clear();
-                int count = 1;
-                foreach(Game game in updatedLiveEvents)
+                if (counter == 1)
                 {
-                    listBoxLiveEvents.Items.Add(count++ +". "+ game.sport + " - " + game.teamAName + " vs " + game.teamBName);
-                } 
-
-                List<Game> newGames = GetNewGames(updatedLiveEvents, currentLiveEvents);
-                //MessageBox.Show(newGames.Count + " games just started.");
-                List<Game> endedGames = GetEndedGames(updatedLiveEvents, currentLiveEvents);
-                //MessageBox.Show(endedGames.Count + " games ended.");
-
-                currentLiveEvents = new List<Game>(updatedLiveEvents);
-
-                foreach (Game game in newGames)
-                {
-                    //string databaseName = GetDatabaseName(game);
-                    //Start Dobby:
-                    ProcessStartInfo startInfo = new ProcessStartInfo
-                    {
-                        Arguments = //@"""" + game.teamAName + @"""" + 
-                                    //@" """ + game.teamBName + @"""" + 
-                                    @" """ + game.linkToLiveWebPage.ToString() + 
-                                    @"""" + @" """ + game.sport + @"""",
-                        FileName = filepathToDobby
-                    };
-                    Process process = Process.Start(startInfo);
-                    TrackedEvent trackedEvent = new TrackedEvent(game, process);//, databaseName);
-                    currentTrackedEvents.Add(trackedEvent);               
+                    //On the first run, add all live events to an "ToBeIgnored" list.
+                    toBeIgnored = new List<Game>(updatedLiveEvents);
                 }
-                foreach(Game game in endedGames)
+                else
                 {
-                    TrackedEvent trackedEvent = GetTrackedEventGivenTheGame(game);
+                    //On every run from the second, first remove the games in "toBeIgnored" list, so only Newly started events are recorded.
+                    foreach(Game game in toBeIgnored)
+                    {
+                        if (updatedLiveEvents.Contains(game))
+                            if (!updatedLiveEvents.Remove(game))
+                                throw new Exception("Could not delete game from updatedLiveEvents list from ignore list.");
+                    }
 
-                    listBoxFinishedEvents.Items.Add(game.sport + " - " + game.teamAName + " vs " + game.teamBName + " started at "+ trackedEvent.startDateTime + ", ended at " + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss"));
-                    //MoveDatabaseFile(trackedEvent.databaseName);
-                    //Run Analysis
-                    completedEvents.Add(trackedEvent);                    
-                    //trackedEvent.processHandle.CloseMainWindow();
-                    currentTrackedEvents.Remove(trackedEvent);
+
+                    //MessageBox.Show(updatedLiveEvents.Count + " updated games");
+                    listBoxLiveEvents.Items.Clear();
+                    int count = 1;
+                    foreach (Game game in updatedLiveEvents)
+                    {
+                        listBoxLiveEvents.Items.Add(count++ + ". " + game.sport + " - " + game.teamAName + " vs " + game.teamBName);
+                    }
+
+                    List<Game> newGames = GetNewGames(updatedLiveEvents, currentLiveEvents);
+                    //MessageBox.Show(newGames.Count + " games just started.");
+                    List<Game> endedGames = GetEndedGames(updatedLiveEvents, currentLiveEvents);
+                    //MessageBox.Show(endedGames.Count + " games ended.");
+
+                    currentLiveEvents = new List<Game>(updatedLiveEvents);
+
+                    foreach (Game game in newGames)
+                    {
+                        //string databaseName = GetDatabaseName(game);
+                        //Start Dobby:
+                        ProcessStartInfo startInfo = new ProcessStartInfo
+                        {
+                            Arguments = //@"""" + game.teamAName + @"""" + 
+                                        //@" """ + game.teamBName + @"""" + 
+                                        @" """ + game.linkToLiveWebPage.ToString() +
+                                        @"""" + @" """ + game.sport + @"""",
+                            FileName = filepathToDobby
+                        };
+                        Process process = Process.Start(startInfo);
+                        TrackedEvent trackedEvent = new TrackedEvent(game, process);//, databaseName);
+                        currentTrackedEvents.Add(trackedEvent);
+                    }
+                    foreach (Game game in endedGames)
+                    {
+                        TrackedEvent trackedEvent = GetTrackedEventGivenTheGame(game);
+
+                        listBoxFinishedEvents.Items.Add(game.sport + " - " + game.teamAName + " vs " + game.teamBName + " started at " + trackedEvent.startDateTime + ", ended at " + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss"));
+                        //MoveDatabaseFile(trackedEvent.databaseName);
+                        //Run Analysis
+                        completedEvents.Add(trackedEvent);
+                        //trackedEvent.processHandle.CloseMainWindow();
+                        currentTrackedEvents.Remove(trackedEvent);
+                    }
                 }
                 counterLabel.Content = counter++; 
             }));
@@ -268,6 +279,10 @@ namespace MaraudersMap
         {
             //string html = mainPageWebBrowser.ExecuteJavascriptWithResult("document.getElementsByTagName('html')[0].innerHTML");
             //return html;
+            //Refresh browser
+            //mainPageWebBrowser.Refresh();
+            mainPageWebBrowser.Refresh(true); //WebBrowserRefreshOption.Completely)
+            //mainPageWebBrowser.Navigate(new Uri("https://sports.bovada.lv/live-betting"));
             mshtml.HTMLDocumentClass dom = (mshtml.HTMLDocumentClass)mainPageWebBrowser.Document;
             return dom.body.innerHTML;
         }
